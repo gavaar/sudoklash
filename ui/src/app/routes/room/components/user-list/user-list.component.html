@@ -1,17 +1,23 @@
 <ng-container *ngIf="(userMessage | async) as userMessage">
   <ng-container *ngIf="(gameMessage | async) as gameMessage">
     <div class="user-list__players" *ngIf="gameMessage.players as players">
-      <div *ngIf="userMessage.users[0] as user; else unconnected"
+      <div *ngIf="userMessage.users[0] as user; else notconnected"
         class="user-list__player"
         [ngClass]="{ selected: players[0].id === user.id || players[1].id === user.id }">
         <sudo-nameplate [user]="user"></sudo-nameplate>
-        <small *ngIf="players[0].id != user.id && players[1].id != user.id">Selecting number...</small>
+        <small *ngIf="players[0].id != user.id && players[1].id != user.id"
+          class="user-list__selecting-number">
+          Selecting number...
+        </small>
       </div>
 
-      <div *ngIf="userMessage.users[1] as user; else unconnected"
+      <div *ngIf="userMessage.users[1] as user; else notconnected"
         class="user-list__player">
         <sudo-nameplate [user]="user"></sudo-nameplate>
-        <small *ngIf="players[0].id != user.id && players[1].id != user.id">small text here</small>
+        <small *ngIf="players[0].id != user.id && players[1].id != user.id"
+          class="user-list__selecting-number">
+          Selecting number...
+        </small>
       </div>
 
       <div *ngFor="let user of restUsers | async; trackBy: restUsersFn"
@@ -30,9 +36,9 @@
   </ng-container>
 </ng-container>
 
-<ng-template #unconnected>
+<ng-template #notconnected>
   <div class="user-list__player">
     <sudo-nameplate [user]="{ avatar: GRAY_IMG, username: 'No player' }"></sudo-nameplate>
-    <small>🔌</small>
+    <small class="user-list__selecting-number">🔌</small>
   </div>
 </ng-template>

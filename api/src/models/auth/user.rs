@@ -3,11 +3,11 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 use rand::prelude::*;
 
-const POSSIBLE_NAMES: ([&str; 8], [&str; 8]) = (
+const POSSIBLE_NAMES: ([&str; 10], [&str; 10]) = (
   // Emotions
-  ["Bored", "Happy", "Sad", "Hungry", "Angry", "Confused", "Horny", "Excited"],
+  ["Bored", "Happy", "Sad", "Hungry", "Angry", "Confused", "Horny", "Excited", "Annoyed", "Anxious"],
   // Animals
-  ["Hippo", "Camel", "Penguin", "Doggo", "Cat", "Rhyno", "Squid", "Panda"],
+  ["Hippo", "Camel", "Penguin", "Doggo", "Cat", "Rhyno", "Squid", "Panda", "Fox", "Moose"],
 );
 
 #[allow(non_snake_case)]

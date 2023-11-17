@@ -55,8 +55,8 @@ import { RouterLink } from '@angular/router';
     .home__button {
       background: transparent;
       font-weight: 700;
-      color: var(--black);
-      border: 1px solid var(--black);
+      color: var(--lightblack);
+      border: 1px solid var(--lightblack);
       padding: 0.2rem 0.5rem;
       border-radius: 0.5rem;
     }

@@ -16,11 +16,11 @@ async fn main() -> std::io::Result<()> {
     let db = db::AppState::init();
     let app_data = web::Data::new(db);
 
-    println!("\n\n🚀 Server started successfully on localhost:8000");
+    println!("\n\n🚀 Server started successfully on 127.0.0.1:8000");
 
     HttpServer::new(move || {
         let cors = Cors::default()
-            .allowed_origin("http://localhost:4200")
+            .allowed_origin("http://127.0.0.1:4200")
             .allowed_methods(vec!["GET", "POST"])
             .allowed_headers(vec![
                 header::CONTENT_TYPE,

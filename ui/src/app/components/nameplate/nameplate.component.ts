@@ -24,7 +24,7 @@ import { ChangeDetectionStrategy, Component, Input, ViewEncapsulation } from '@a
     }
 
     .sudo-namplate__img {
-      width: 3rem;
+      width: 2rem;
       border-radius: 50%;
     }
   `],

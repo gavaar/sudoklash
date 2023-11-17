@@ -23,7 +23,7 @@
   display: flex;
   flex: 1 0 0;
   flex-direction: column;
-  min-width: 12rem;
+  min-width: 10rem;
   max-width: 20rem;
   justify-content: center;
   align-items: center;
@@ -61,4 +61,9 @@
     opacity: 1;
     transition: 0.3s;
   }
+}
+
+.user-list__selecting-number {
+  font-size: 0.75rem;
+  opacity: 0.8;
 }

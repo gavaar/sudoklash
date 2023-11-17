@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { UserService } from '../user';
 import { Observable, filter, take, tap } from 'rxjs';
 import { WebSocketManager } from './websocket-manager';
+import { environment } from 'src/environments/environment';
 
 export interface RoomUser {
   id: string;
@@ -44,7 +45,7 @@ export interface GameServerMessage {
 }
 type GameUserMessage = GameUserConnect | GameUserTurn;
 
-const WSUrl = 'ws://localhost:8000/v1/rooms';
+const WSUrl = `ws://${environment.apiUrl}/v1/rooms`;
 
 @Injectable({ providedIn: 'root' })
 export class RoomWsService {

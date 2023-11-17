@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { UserService } from './services';
 
 @Component({
@@ -8,7 +8,7 @@ import { UserService } from './services';
   standalone: true,
   imports: [CommonModule, RouterOutlet, RouterLink],
   template: `
-    <header>Hello {{ (user$ | async)?.name }}</header>
+    <header (click)="goHome()">Hello {{ (user$ | async)?.name }}</header>
     <main>
       <router-outlet></router-outlet>
     </main>
@@ -19,10 +19,16 @@ import { UserService } from './services';
 export class AppComponent implements OnInit {
   user$ = this.userService.user$;
 
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService, private router: Router) {}
 
   ngOnInit(): void {
     this.userService.init().subscribe();
+  }
+
+  goHome() {
+    if (confirm('Go back home?')) {
+      this.router.navigate(['/']);
+    }
   }
 
   linkToGithub(): void {
