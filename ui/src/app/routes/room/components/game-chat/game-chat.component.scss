@@ -18,15 +18,23 @@
 .game-chat__input {
   display: flex;
   column-gap: 0.5rem;
+  position: relative;
 
   ::ng-deep.sudo-send-button {
     background-color: lightgreen;
   }
 }
 
+.game-chat__send-button {
+  position: absolute;
+  right: 0.25rem;
+  top: 0.25rem;
+}
+
 .game-chat__textarea {
   flex-grow: 1;
   resize: none;
+  padding-right: 2.5rem;
   transition: 0.25s;
   outline: none;
   height: 2rem;

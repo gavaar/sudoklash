@@ -24,13 +24,18 @@
   border-radius: 4px;
   box-shadow: inset 0px 0px 4px 0px var(--active);
 
-  &[disabled] {
+  &.disabled {
     --active: darkgray;
     opacity: 0.5;
   }
 
   &.accent {
     --active: var(--green);
+  }
+
+  &.locked,
+  &.locked.accent {
+    --active: red;
   }
 
   &:active {

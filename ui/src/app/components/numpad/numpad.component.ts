@@ -13,10 +13,11 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Out
 export class NumpadComponent implements OnChanges {
   @Input() disabledPads:  boolean[] = [];
   @Input() accentPads: boolean[] = [];
+  @Input() lockedPads: boolean[] = [];
   @Output() hold = new EventEmitter<number>();
   @Output() select = new EventEmitter<number>();
 
-  padStatuses = Array.from(new Array(10), () => ({ disabled: false, accent: false }));
+  padStatuses = Array.from(new Array(10), () => ({ disabled: false, accent: false, locked: false }));
 
   private held = false;
   private timeout?: any;
@@ -31,6 +32,12 @@ export class NumpadComponent implements OnChanges {
     if (changes['disabledPads']) {
       for (let num in this.disabledPads) {
         this.padStatuses[+num].disabled = this.disabledPads[num];
+      }
+    }
+
+    if (changes['lockedPads']) {
+      for (let num in this.lockedPads) {
+        this.padStatuses[+num].locked = this.lockedPads[num];
       }
     }
   }

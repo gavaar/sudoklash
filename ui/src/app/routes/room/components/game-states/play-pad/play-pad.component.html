@@ -1,11 +1,20 @@
 <div class="sudo-play-pad">
   <div class="sudo-play-pad__inputs">
-    <span *ngFor="let number of selection(); let i = index"
-      class="sudo-play-pad__input"
-      [ngClass]="{ focused: focusedPos === i, accented: accentPads[number ?? -1] }"
-      (click)="updateFocus(i)">
-      {{ number ?? '' }}
-    </span>
+    <div *ngFor="let number of selection(); let i = index"
+      class="sudo-play-pad__input-unit"
+      [ngClass]="{ locked: lockedSelection[i] }">
+      <div
+        class="sudo-play-pad__input"
+        [ngClass]="{ focused: focusedPos === i, accented: accentPads[number ?? -1] }"
+        (click)="updateFocus(i)">
+        {{ number ?? '' }}
+      </div>
+      <span class="sudo-play-pad__lock"
+        [ngClass]="{ disabled: !canLock }"
+        (click)="toggleLock(i)">
+        🔒
+      </span>
+    </div>
     <sudo-send-button class="sudo-play-pad__submit"
       [disabled]="submitDisabled() || forceDisabled"
       (click)="submitSelection()">
@@ -14,6 +23,7 @@
   <sudo-numpad
     [disabledPads]="disabledPads()"
     [accentPads]="accentPads"
+    [lockedPads]="lockedPads"
     (select)="selectNum($event)"
     (hold)="holdNum($event)"></sudo-numpad>
 </div>

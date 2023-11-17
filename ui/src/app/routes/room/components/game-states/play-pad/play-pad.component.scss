@@ -7,20 +7,50 @@
   align-items: center;
 }
 
+.sudo-play-pad__input-unit {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  &.locked {    
+    .sudo-play-pad__input {
+      color: red;
+      border-color: black;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    .sudo-play-pad__lock {
+      background-color: black;
+    }
+  }
+}
+
 .sudo-play-pad__input {
   text-align: center;
   font-size: 3rem;
   height: 4rem;
   width: 4rem;
-  border: 1px solid darkgray;
+  border: 3px solid darkgray;
   border-radius: 0.5rem;
 
   &.focused {
-    box-shadow: 0 0 16px 0px green;
+    border-color: green;
   }
 
   &.accented {
     color: var(--green);
+  }
+}
+
+.sudo-play-pad__lock {
+  text-align: center;
+  padding: 0.25rem;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+
+  &.disabled {
+    opacity: 0.1;
   }
 }
 

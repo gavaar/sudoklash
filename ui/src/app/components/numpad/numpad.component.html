@@ -1,8 +1,7 @@
 <div class="sudo-numpad">
   <button *ngFor="let pos of padStatuses; let i = index"
     class="sudo-numpad__option"
-    [ngClass]="{ accent: pos.accent }"
-    [disabled]="pos.disabled"
+    [ngClass]="{ accent: pos.accent, disabled: pos.disabled, locked: pos.locked }"
     (touchstart)="$event.stopPropagation(); down(i)"
     (mousedown)="$event.stopPropagation(); down(i)"
     (touchend)="$event.stopPropagation(); $event.preventDefault(); up(i)"
