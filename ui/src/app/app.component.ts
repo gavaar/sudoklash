@@ -12,11 +12,7 @@ import { UserService } from './services';
     <main>
       <router-outlet></router-outlet>
     </main>
-    <footer>
-      <a routerLink="">Home</a>
-      <a routerLink="how-to-play">How to play</a>
-      <a routerLink="room">Room</a>
-    </footer>
+    <footer (click)="linkToGithub()">Made by &#64;gavaar</footer>
   `,
   styleUrls: ['./app.component.scss'],
 })
@@ -27,5 +23,9 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.userService.init().subscribe();
+  }
+
+  linkToGithub(): void {
+    window.open('https://github.com/gavaar', '_blank');
   }
 }

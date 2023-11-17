@@ -16,6 +16,7 @@ const roomServiceInitializer: ResolveFn<any> = (route: ActivatedRouteSnapshot, _
 }
 
 export const routes: Routes = [
+  { path: '', loadComponent: () => import('./routes/home/home.component').then(c => c.HomeComponent) },
   { path: 'how-to-play', loadComponent: () => import('./routes/how_to_play/how_to_play.component').then(c => c.HowToPlayComponent) },
   {
     path: 'room',
