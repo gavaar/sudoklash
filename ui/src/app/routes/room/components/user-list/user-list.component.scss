@@ -1,0 +1,64 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.user-list {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.user-list__players {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 40rem;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.user-list__player {
+  display: flex;
+  flex: 1 0 0;
+  flex-direction: column;
+  min-width: 12rem;
+  max-width: 20rem;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+  padding: 0.5rem;
+
+  &.selected {
+    .sudo-nameplate {
+      color: var(--green);
+    }
+  }
+
+  sudo-nameplate {
+    width: 100%;
+  }
+
+}
+
+.user-list__open-button {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  border-bottom: 1px solid lightgray;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+}
+
+.user-list__open-button-arrow {
+  transform: rotate(90deg);
+  opacity: 0.2;
+  transition: 0.3s;
+
+  &.open {
+    transform: rotate(-90deg);
+    opacity: 1;
+    transition: 0.3s;
+  }
+}

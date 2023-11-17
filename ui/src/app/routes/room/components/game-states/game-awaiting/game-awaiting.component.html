@@ -1,0 +1,11 @@
+<div *ngIf="gameState$ | async as gameState"
+  class="game-awaiting">
+  <sudo-play-pad *ngIf="gameState.isSitting; else justWaiting"
+    [forceDisabled]="gameState.alreadyJoined"
+    (played)="connectToGame($event)">
+  </sudo-play-pad>
+</div>
+
+<ng-template #justWaiting>
+  <p>Waiting for players to choose their numbers...</p>
+</ng-template>

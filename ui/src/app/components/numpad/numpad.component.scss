@@ -1,0 +1,41 @@
+.sudo-numpad {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 4rem;
+  justify-content: center;
+
+  --active: var(--black);
+}
+
+.sudo-numpad__option {
+  /* 20vw - (gap - margin) / 2 */
+  width: calc(20vw - 2.25rem);
+  height: calc(20vw - 2.25rem);
+  max-width: 5rem;
+  max-height: 5rem;
+  font-size: 2rem;
+  font-weight: 700;
+  user-select: none;
+  /* todo: create a look & feel */
+  color: var(--active);
+  background-color: transparent;
+  border: 0;
+  border-radius: 4px;
+  box-shadow: inset 0px 0px 4px 0px var(--active);
+
+  &[disabled] {
+    --active: darkgray;
+    opacity: 0.5;
+  }
+
+  &.accent {
+    --active: var(--green);
+  }
+
+  &:active {
+    color: white;
+    box-shadow: none;
+    background-color: var(--active);
+  }
+}

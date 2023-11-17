@@ -1,0 +1,38 @@
+<ng-container *ngIf="(userMessage | async) as userMessage">
+  <ng-container *ngIf="(gameMessage | async) as gameMessage">
+    <div class="user-list__players" *ngIf="gameMessage.players as players">
+      <div *ngIf="userMessage.users[0] as user; else unconnected"
+        class="user-list__player"
+        [ngClass]="{ selected: players[0].id === user.id || players[1].id === user.id }">
+        <sudo-nameplate [user]="user"></sudo-nameplate>
+        <small *ngIf="players[0].id != user.id && players[1].id != user.id">Selecting number...</small>
+      </div>
+
+      <div *ngIf="userMessage.users[1] as user; else unconnected"
+        class="user-list__player">
+        <sudo-nameplate [user]="user"></sudo-nameplate>
+        <small *ngIf="players[0].id != user.id && players[1].id != user.id">small text here</small>
+      </div>
+
+      <div *ngFor="let user of restUsers | async; trackBy: restUsersFn"
+        class="user-list__player">
+        <sudo-nameplate [user]="user"></sudo-nameplate>
+      </div>
+    </div>
+    <div *ngIf="userMessage.users.length > 2"
+      class="user-list__open-button"
+      (click)="open.next(!open.value)">
+      <div class="user-list__open-button-arrow"
+        [ngClass]="{ open: open | async }">
+        ➧
+      </div>
+    </div>
+  </ng-container>
+</ng-container>
+
+<ng-template #unconnected>
+  <div class="user-list__player">
+    <sudo-nameplate [user]="{ avatar: GRAY_IMG, username: 'No player' }"></sudo-nameplate>
+    <small>🔌</small>
+  </div>
+</ng-template>

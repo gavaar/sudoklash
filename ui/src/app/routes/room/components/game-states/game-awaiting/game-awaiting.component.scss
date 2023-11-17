@@ -1,0 +1,24 @@
+.game-awaiting {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.game-awaiting__players {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 1rem;
+  max-width: 40rem;
+  justify-content: space-around;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.game-awaiting__player {
+  display: flex;
+  flex: 1 0 0;
+  gap: 0.5rem;
+  align-items: center;
+  min-width: 15rem;
+  font-size: 1.5rem;
+}

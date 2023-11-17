@@ -1,0 +1,35 @@
+.sudo-play-pad__inputs {
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 1rem;
+  margin: 1rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.sudo-play-pad__input {
+  text-align: center;
+  font-size: 3rem;
+  height: 4rem;
+  width: 4rem;
+  border: 1px solid darkgray;
+  border-radius: 0.5rem;
+
+  &.focused {
+    box-shadow: 0 0 16px 0px green;
+  }
+
+  &.accented {
+    color: var(--green);
+  }
+}
+
+.sudo-play-pad__submit::ng-deep .sudo-send-button {
+  width: 4rem;
+  height: 4rem;
+
+  .sudo-send-button__arrow {
+    font-size: 2.5rem;
+    transform: rotate(-90deg);
+  }
+}

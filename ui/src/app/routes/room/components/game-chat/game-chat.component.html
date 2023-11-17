@@ -1,0 +1,33 @@
+<div *ngIf="messages() as messages"
+  class="game-chat__body">
+  <ng-container *ngFor="let message of messages; trackBy: messageFn"
+    [ngSwitch]="message.type">
+    <user-message *ngSwitchCase="MessageType.User"
+      [message]="$any(message)"
+      [style.--user-color]="message.author?.color"
+      [ngClass]="{ right: message.author?.position === 'right' }">
+    </user-message>
+
+    <server-message *ngSwitchCase="MessageType.Server"
+      [message]="$any(message)">
+    </server-message>
+
+    <turn-message *ngSwitchCase="MessageType.Turn"
+      [message]="$any(message)"
+      [style.--user-color]="message.author?.color"
+      [ngClass]="{
+        right: message.author?.position === 'right',
+        winner: message.dead === 4,
+      }">
+    </turn-message>
+  </ng-container>
+</div>
+
+<div class="game-chat__input">
+  <textarea type="text"
+    class="game-chat__textarea"
+    placeholder="I can't believe it!..."
+    [formControl]="chatControl"
+    (keydown.enter)="$event.preventDefault(); sendMessage()"></textarea>
+  <sudo-send-button (click)="sendMessage()"></sudo-send-button>
+</div>
