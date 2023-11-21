@@ -36,7 +36,7 @@ export class UserService {
     return this.setUserData().pipe(
         concatMap(() => {
           const headers = new HttpHeaders().append('Authorization', `Bearer ${this.token}`);
-          return this.https.get<User>(`${environment.protocol}${environment.apiUrl}/v1/users/me`, { headers });
+          return this.https.get<User>(`${environment.httpProtocol}${environment.apiUrl}/v1/users/me`, { headers });
         }),
         catchError((error) => {
           // request a new token when previous one expires
@@ -60,7 +60,7 @@ export class UserService {
       return of({ headers: this.token });
     }
 
-    return this.https.get<void>(`${environment.protocol}${environment.apiUrl}/v1/sessions/temp_user`, { observe: 'response', })
+    return this.https.get<void>(`${environment.httpProtocol}${environment.apiUrl}/v1/sessions/temp_user`, { observe: 'response', })
       .pipe(
         tap(({ headers }) => this.token = headers.get('sudo_token')),
       );

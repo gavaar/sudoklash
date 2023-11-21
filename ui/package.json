@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --host 127.0.0.1",
-    "build": "ng build",
+    "start": "ng serve",
+    "build": "ng build --configuration production",
     "watch": "ng build --watch --configuration development"
   },
   "private": true,
@@ -23,8 +23,9 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^16.1.6",
-    "@angular/cli": "~16.1.6",
+    "@angular/cli": "^17.0.1",
     "@angular/compiler-cli": "^16.1.0",
+    "@flydotio/dockerfile": "latest",
     "typescript": "~5.1.3"
   }
 }

@@ -45,7 +45,7 @@ export interface GameServerMessage {
 }
 type GameUserMessage = GameUserConnect | GameUserTurn;
 
-const WSUrl = `ws://${environment.apiUrl}/v1/rooms`;
+const WSUrl = `${environment.websocketProtocol}${environment.apiUrl}/v1/rooms`;
 
 @Injectable({ providedIn: 'root' })
 export class RoomWsService {

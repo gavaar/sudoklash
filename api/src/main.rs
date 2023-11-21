@@ -15,12 +15,14 @@ mod routes;
 async fn main() -> std::io::Result<()> {
     let db = db::AppState::init();
     let app_data = web::Data::new(db);
+    let client_origin = app_data.env.client_origin.to_owned();
 
-    println!("\n\n🚀 Server started successfully on 127.0.0.1:8000");
+    println!("{}", format!("\n\n🚀 Server started successfully on {}:8080", &app_data.env.client_origin.as_str()));
 
     HttpServer::new(move || {
         let cors = Cors::default()
-            .allowed_origin("http://127.0.0.1:4200")
+            // .allowed_origin("sudoklash.fly.dev") todo: find the correct origins allowed
+            .allow_any_origin()
             .allowed_methods(vec!["GET", "POST"])
             .allowed_headers(vec![
                 header::CONTENT_TYPE,
@@ -36,7 +38,7 @@ async fn main() -> std::io::Result<()> {
             .wrap(cors)
             .wrap(Logger::default())
     })
-    .bind(("127.0.0.1", 8000))?
+    .bind((client_origin, 8080))?
     .run()
     .await
 }
