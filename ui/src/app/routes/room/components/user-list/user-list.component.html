@@ -1,5 +1,5 @@
-<ng-container *ngIf="(userMessage | async) as userMessage">
-  <ng-container *ngIf="(gameMessage | async) as gameMessage">
+<ng-container *ngIf="userMessage() as userMessage">
+  <ng-container *ngIf="gameMessage() as gameMessage">
     <div class="user-list__players" *ngIf="gameMessage.players as players">
       <div *ngIf="userMessage.users[0] as user; else notconnected"
         class="user-list__player"
@@ -20,16 +20,16 @@
         </small>
       </div>
 
-      <div *ngFor="let user of restUsers | async; trackBy: restUsersFn"
+      <div *ngFor="let user of restUsers(); trackBy: restUsersFn"
         class="user-list__player">
         <sudo-nameplate [user]="user"></sudo-nameplate>
       </div>
     </div>
     <div *ngIf="userMessage.users.length > 2"
       class="user-list__open-button"
-      (click)="open.next(!open.value)">
+      (click)="open.set(!open())">
       <div class="user-list__open-button-arrow"
-        [ngClass]="{ open: open | async }">
+        [ngClass]="{ open: open() }">
         ➧
       </div>
     </div>

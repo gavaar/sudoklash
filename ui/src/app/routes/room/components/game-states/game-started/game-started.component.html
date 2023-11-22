@@ -1,4 +1,4 @@
-<div *ngIf="gameState$ | async as gameState"
+<div *ngIf="gameState() as gameState"
   class="game-started">
   <sudo-play-pad *ngIf="gameState.isSitting"
     [forceDisabled]="!gameState.isPlayerTurn"

@@ -61,16 +61,8 @@ export class RoomWsService {
 
   playerSelection = signal('');
 
-  get room$(): Observable<RoomMessage> {
-    return this.roomWs.socketUpdates$;
-  }
-  get game$(): Observable<GameServerMessage> {
-    return this.gameWs.socketUpdates$;
-  }
-
-  get room(): RoomMessage {
-    return this.roomWs.current;
-  }
+  room = signal<RoomMessage | null>(null);
+  game = signal<GameServerMessage | null>(null);
 
   constructor(private userService: UserService) {}
 
@@ -84,14 +76,14 @@ export class RoomWsService {
 
     this.roomWs = new WebSocketManager<RoomMessage, UserClientMessage>(roomUrl);
 
-    return this.room$.pipe(
-      filter(v => v.room_id != null),
+    return this.roomWs.socketUpdates$.pipe(
       take(1),
       tap(({room_id}) => {
         this.roomId = room_id;
         this.playerSelection.set(this._playerSelectionMem);
         const gameUrl = `${WSUrl}/game/${room_id}?token=${this.userService.token}`;
         this.gameWs = new WebSocketManager<GameServerMessage, GameUserMessage>(gameUrl);
+        this.connectSignals();
       }),
     );
   }
@@ -115,5 +107,10 @@ export class RoomWsService {
 
   playTurn(turn: string): void {
     this.gameWs.next({ play: turn, user_id: this.userService.user!.id });
+  }
+
+  private connectSignals(): void {
+    this.roomWs.socketUpdates$.subscribe((r) => this.room.set(r))
+    this.gameWs.socketUpdates$.subscribe((r) => this.game.set(r))
   }
 }

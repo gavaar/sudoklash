@@ -1,4 +1,4 @@
-<section *ngIf="gameState$ | async as gameState" class="room">
+<section *ngIf="gameState() as gameState" class="room">
   <div *ngIf="showCopyMessage"
     class="room__invite"
     (click)="onShareRoom()">

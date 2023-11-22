@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { BehaviorSubject, Observable, filter } from 'rxjs';
 import { WebSocketSubject, webSocket } from 'rxjs/webSocket';
 
@@ -5,9 +6,7 @@ export class WebSocketManager<T, K> {
   private _webSocket: WebSocketSubject<T | K>;
   private _webSocketSubject = new BehaviorSubject<T>(null as T);
 
-  get current(): T {
-    return this._webSocketSubject.value;
-  }
+  wsSignal = signal<T | null>(null);
 
   get socketUpdates$(): Observable<T> {
     return this._webSocketSubject.asObservable().pipe(filter(Boolean));

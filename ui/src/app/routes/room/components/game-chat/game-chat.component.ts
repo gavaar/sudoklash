@@ -1,13 +1,14 @@
 import { DatePipe, NgClass, NgFor, NgIf, NgSwitch, NgSwitchCase } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, Signal, WritableSignal, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Signal, WritableSignal, computed, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { AsyncSubject, takeUntil } from 'rxjs';
 import { SendButtonComponent } from 'src/app/components/send-button/send-button.component';
-import { GameServerMessage, RoomUser, RoomWsService, RoomMessage } from 'src/app/services/websocket/room.wsService';
+import { GameServerMessage, RoomMessage, RoomUser, RoomWsService } from 'src/app/services/websocket/room.wsService';
 import { UserMessageComponent } from './messages/user-message.component';
 import { UserMessage, GameMessage, ServerMessage, TurnMessage, MessageType } from './models';
 import { ServerMessageComponent } from './messages/server-message.component';
 import { TurnMessageComponent } from './messages/turn-message.component';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { filter } from 'rxjs';
 
 const SERVER_AUTHOR = '_ROOM_';
 
@@ -19,11 +20,10 @@ const SERVER_AUTHOR = '_ROOM_';
   styleUrls: ['./game-chat.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GameChatComponent implements OnInit, OnDestroy {
-  private _destroy$ = new AsyncSubject();
-  private roomUsers: WritableSignal<RoomUser[]> = signal([]);
+export class GameChatComponent {
+  private turnMessages: Signal<TurnMessage[]> = computed(() => this.turnsFromGame(this.roomService.game()));
+  private roomUsers: Signal<RoomUser[]> = computed(() => this.roomService.room()?.users || []);
   private serverMessages: WritableSignal<(ServerMessage | UserMessage)[]> = signal([]);
-  private turnMessages: WritableSignal<TurnMessage[]> = signal([]);
 
   MessageType = MessageType;
 
@@ -37,21 +37,8 @@ export class GameChatComponent implements OnInit, OnDestroy {
 
   messageFn = (_: number, message: GameMessage) => message.sent_at;
 
-  constructor(private roomService: RoomWsService) {}
-
-  ngOnInit(): void {
-    this.roomService.game$.pipe(takeUntil(this._destroy$)).subscribe({
-      next: (game) => this.updateTurnMessages(game),
-    });
-
-    this.roomService.room$.pipe(takeUntil(this._destroy$)).subscribe({
-      next: (room) => this.updateRoomMessages(room),
-    })
-  }
-
-  ngOnDestroy(): void {
-    this._destroy$.next(true);
-    this._destroy$.complete();
+  constructor(private roomService: RoomWsService) {
+    toObservable(this.roomService.room).pipe(filter(Boolean)).subscribe(room => this.updateRoomMessages(room));
   }
 
   sendMessage(): void {
@@ -68,8 +55,12 @@ export class GameChatComponent implements OnInit, OnDestroy {
     return { ...this.roomUsers()[author_position], position, color };
   }
 
-  private updateTurnMessages(game: GameServerMessage): void {
-    this.turnMessages.set(game.history.map(turn => {
+  private turnsFromGame(game: GameServerMessage | null): TurnMessage[] {
+    if (!game) {
+      return [];
+    }
+
+    return game.history.map(turn => {
       const sent_at = +new Date(turn.played_at);
       const author = this.getAuthor(turn.user_id);
 
@@ -81,15 +72,13 @@ export class GameChatComponent implements OnInit, OnDestroy {
         dead: turn.result[1],
         type: MessageType.Turn,
       };
-    }));
+    });
   }
 
   private updateRoomMessages(room: RoomMessage): void {
     const [author_id, message] = room.message.split('::');
     const sent_at = +new Date(room.sent_at);
     const currentMessages = this.serverMessages();
-
-    this.roomUsers.set(room.users);
 
     if (author_id === SERVER_AUTHOR) {
       const serverMessage: ServerMessage = {

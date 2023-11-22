@@ -1,4 +1,4 @@
-<div *ngIf="gameState$ | async as gameState"
+<div *ngIf="gameState() as gameState"
   class="game-awaiting">
   <sudo-play-pad *ngIf="gameState.isSitting && !gameState.alreadyJoined; else justWaiting"
     [canLock]="false"
