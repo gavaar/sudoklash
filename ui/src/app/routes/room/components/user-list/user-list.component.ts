@@ -12,17 +12,18 @@ import { RoomWsService } from 'src/app/services/websocket/room.wsService';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserListComponent {
-  open = signal(false);
+  opened = signal(false);
 
   userMessage = this.roomService.room;
   gameMessage = this.roomService.game;
 
   restUsers = computed(() => {
-    if (!open() || !this.userMessage())  {
+    const users = this.userMessage()?.users;
+    if (!this.opened() || !users)  {
       return [];
     }
-
-    return this.userMessage()?.users.slice(2);
+    
+    return users.slice(2);
   });
 
   readonly GRAY_IMG = 'data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==';

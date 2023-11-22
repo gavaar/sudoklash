@@ -27,9 +27,9 @@
     </div>
     <div *ngIf="userMessage.users.length > 2"
       class="user-list__open-button"
-      (click)="open.set(!open())">
+      (click)="opened.set(!opened())">
       <div class="user-list__open-button-arrow"
-        [ngClass]="{ open: open() }">
+        [ngClass]="{ open: opened() }">
         ➧
       </div>
     </div>

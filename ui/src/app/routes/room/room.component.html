@@ -5,7 +5,7 @@
     <span class="room__invite-message">{{ copyAddressMessage() }}</span>
     <span class="room__invite-close" (click)="showCopyMessage = false">X</span>
   </div>
-  <div *ngIf="gameState.status != GameStatus.Ended && gameState.myTurn" class="room__turn-signal">It's your turn!</div>
+  <div *ngIf="gameState.status === GameStatus.Started && gameState.myTurn" class="room__turn-signal">It's your turn!</div>
   <user-list></user-list>
   <game-chat></game-chat>
   <ng-container [ngSwitch]="gameState.status">
