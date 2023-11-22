@@ -5,67 +5,29 @@ import { GameStatus, RoomWsService } from 'src/app/services/websocket/room.wsSer
 import { UserListComponent } from './components/user-list/user-list.component';
 import { GameChatComponent } from './components/game-chat/game-chat.component';
 import { GameStartedComponent, GameAwaitingComponent } from './components/game-states';
-import { Router } from '@angular/router';
-import { environment } from 'src/environments/environment';
+import { UserService } from 'src/app/services';
 
 @Component({
   standalone: true,
   imports: [NgIf, NgSwitch, NgSwitchCase, AsyncPipe, UserListComponent, GameAwaitingComponent, GameStartedComponent, GameChatComponent],
-  template: `
-  <section class="room">
-    <div *ngIf="showCopyMessage"
-      class="room__invite"
-      (click)="onShareRoom()">
-      <span class="room__invite-message">{{ copyAddressMessage() }}</span>
-      <span class="room__invite-close" (click)="showCopyMessage = false">X</span>
-    </div>
-    <user-list></user-list>
-    <game-chat></game-chat>
-    <ng-container [ngSwitch]="gameState$ | async">
-      <!-- todo: combine awaiting and started in one -->
-      <game-awaiting *ngSwitchCase="GameStatus.Awaiting"></game-awaiting>
-      <game-started *ngSwitchCase="GameStatus.Started">Started!</game-started>
-      <!-- <div *ngSwitchCase="GameStatus.Ended">Ended!</div> -->
-    </ng-container>
-  </section>
-  `,
-  styles: [`
-    .room {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-    }
-
-    .room__invite {
-      display: flex;
-      font-size: 0.8rem;
-      padding: 0.25rem;
-      text-align: center;
-      background: var(--black);
-      color: var(--white);
-      line-height: 1rem;
-    }
-
-    .room__invite-message {
-      margin: auto;
-    }
-
-    .room__invite-close {
-      opacity: 0.7;
-    }
-  `],
+  templateUrl: './room.component.html',
+  styleUrls: ['./room.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RoomComponent implements OnDestroy {
   GameStatus = GameStatus;
   showCopyMessage = true;
   copyAddressMessage = signal('Click to copy this room address');
+  playerSelection = this.roomService.playerSelection;
 
   gameState$ = this.roomService.game$.pipe(
-    map(game => game.game_status),
+    map(game => ({
+        status: game.game_status,
+        myTurn: this.isMyTurn(game),
+      })),
   );
 
-  constructor(private roomService: RoomWsService, private route: Router) {}
+  constructor(private userService: UserService, private roomService: RoomWsService) {}
 
   ngOnDestroy(): void {
     this.roomService.destroy();
@@ -76,14 +38,18 @@ export class RoomComponent implements OnDestroy {
       navigator.share({
         title: 'Hit or dead',
         text: 'Let\'s play a game of hit or dead!',
-        url: `${environment.baseUrl}/${this.route.url}`,
+        url: location.href,
       });
     } else {
-      navigator.clipboard.writeText(`${environment.baseUrl}/${this.route.url}`);
+      navigator.clipboard.writeText(location.href);
       this.copyAddressMessage.set('✅ Copied!');
       setTimeout(() => {
         this.copyAddressMessage.set('Click to copy this room address');
       }, 2000)
     }
+  }
+
+  private isMyTurn(game: { current_player_turn: boolean; players: [{ id: string }, { id: string }] }): boolean {
+    return game.players[game.current_player_turn ? 0 : 1].id === this.userService.user?.id;
   }
 }

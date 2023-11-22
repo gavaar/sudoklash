@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { UserService } from '../user';
 import { Observable, filter, take, tap } from 'rxjs';
 import { WebSocketManager } from './websocket-manager';
@@ -51,6 +51,15 @@ const WSUrl = `${environment.websocketProtocol}${environment.apiUrl}/v1/rooms`;
 export class RoomWsService {
   private roomWs!: WebSocketManager<RoomMessage, UserClientMessage>;
   private gameWs!: WebSocketManager<GameServerMessage, GameUserMessage>;
+  private roomId = '';
+  private get _playerSelectionMem() {
+    return sessionStorage.getItem(`${this.roomId}_selection`) || '';
+  }
+  private set _playerSelectionMem(s: string) {    
+    sessionStorage.setItem(`${this.roomId}_selection`, s.padStart(4, '0'));
+  }
+
+  playerSelection = signal('');
 
   get room$(): Observable<RoomMessage> {
     return this.roomWs.socketUpdates$;
@@ -79,6 +88,8 @@ export class RoomWsService {
       filter(v => v.room_id != null),
       take(1),
       tap(({room_id}) => {
+        this.roomId = room_id;
+        this.playerSelection.set(this._playerSelectionMem);
         const gameUrl = `${WSUrl}/game/${room_id}?token=${this.userService.token}`;
         this.gameWs = new WebSocketManager<GameServerMessage, GameUserMessage>(gameUrl);
       }),
@@ -98,6 +109,8 @@ export class RoomWsService {
   // GAME
   playerConnect(selection: number): void {
     this.gameWs.next({ selection });
+    this._playerSelectionMem = selection.toString();
+    this.playerSelection.set(this._playerSelectionMem);
   }
 
   playTurn(turn: string): void {

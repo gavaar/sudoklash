@@ -1,8 +1,7 @@
 <div *ngIf="gameState$ | async as gameState"
   class="game-awaiting">
-  <sudo-play-pad *ngIf="gameState.isSitting; else justWaiting"
+  <sudo-play-pad *ngIf="gameState.isSitting && !gameState.alreadyJoined; else justWaiting"
     [canLock]="false"
-    [forceDisabled]="gameState.alreadyJoined"
     (played)="connectToGame($event)">
   </sudo-play-pad>
 </div>
