@@ -28,9 +28,16 @@
 }
 
 .room__turn-signal {
+  height: 0;
   padding: 0.25rem;
   font-weight: 700;
-  background-color: var(--green);
+  background-color: transparent;
   color: var(--white);
   text-align: center;
+  
+  &.current-turn {
+    height: 1rem;
+    background-color: var(--green);
+    transition: 0.25s;
+  }
 }

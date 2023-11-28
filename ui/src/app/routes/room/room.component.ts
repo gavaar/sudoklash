@@ -1,19 +1,22 @@
-import { NgIf, NgSwitch, NgSwitchCase } from '@angular/common';
+import { NgClass, NgIf, NgSwitch, NgSwitchCase } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnDestroy, computed, signal } from '@angular/core';
 import { GameStatus, RoomWsService } from 'src/app/services/websocket/room.wsService';
 import { UserListComponent } from './components/user-list/user-list.component';
 import { GameChatComponent } from './components/game-chat/game-chat.component';
 import { GameStartedComponent, GameAwaitingComponent } from './components/game-states';
 import { UserService } from 'src/app/services';
+import { AsyncSubject, fromEvent, takeUntil } from 'rxjs';
 
 @Component({
   standalone: true,
-  imports: [NgIf, NgSwitch, NgSwitchCase, UserListComponent, GameAwaitingComponent, GameStartedComponent, GameChatComponent],
+  imports: [NgIf, NgSwitch, NgSwitchCase, NgClass, UserListComponent, GameAwaitingComponent, GameStartedComponent, GameChatComponent],
   templateUrl: './room.component.html',
   styleUrls: ['./room.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RoomComponent implements OnDestroy {
+  private _destroy = new AsyncSubject();
+
   GameStatus = GameStatus;
   showCopyMessage = true;
   copyAddressMessage = signal('Click to copy this room address');
@@ -27,10 +30,14 @@ export class RoomComponent implements OnDestroy {
     }
   });
 
-  constructor(private userService: UserService, private roomService: RoomWsService) {}
+  constructor(private userService: UserService, private roomService: RoomWsService) {
+    this.disableBrowserBackBehavior();
+  }
 
   ngOnDestroy(): void {
     this.roomService.destroy();
+    this._destroy.next(true);
+    this._destroy.complete();
   }
 
   onShareRoom() {
@@ -53,5 +60,14 @@ export class RoomComponent implements OnDestroy {
     if (!game) return false;
 
     return game.players[game.current_player_turn ? 0 : 1].id === this.userService.user?.id;
+  }
+
+  private disableBrowserBackBehavior(): void {
+    history.pushState(null, '');
+    history.forward();
+
+    fromEvent(window, 'popstate').pipe(
+      takeUntil(this._destroy),
+    ).subscribe(() => history.pushState(null, ''));
   }
 }

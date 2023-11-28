@@ -1,21 +1,25 @@
-<section *ngIf="gameState() as gameState" class="room">
+<section class="room" *ngIf="gameState() as gameState" >
   <div *ngIf="showCopyMessage"
     class="room__invite"
     (click)="onShareRoom()">
     <span class="room__invite-message">{{ copyAddressMessage() }}</span>
     <span class="room__invite-close" (click)="showCopyMessage = false">X</span>
   </div>
-  <div *ngIf="gameState.status === GameStatus.Started && gameState.myTurn" class="room__turn-signal">It's your turn!</div>
   <user-list></user-list>
   <game-chat></game-chat>
+
   <ng-container [ngSwitch]="gameState.status">
     <!-- todo: combine awaiting and started in one -->
     <game-awaiting *ngSwitchCase="GameStatus.Awaiting"></game-awaiting>
-    <game-started *ngSwitchCase="GameStatus.Started">Started!</game-started>
+    <ng-container *ngSwitchCase="GameStatus.Started">
+      <game-started>Started!</game-started>
+    </ng-container>
     <!-- <div *ngSwitchCase="GameStatus.Ended">Ended!</div> -->
-    <small *ngIf="gameState.status != GameStatus.Ended && playerSelection() as selection"
-      class="room__selection">
-      You selected: {{ selection }}
-    </small>
   </ng-container>
+
+  <small *ngIf="gameState.status != GameStatus.Ended && playerSelection() as selection"
+    class="room__selection">
+    You selected: {{ selection }}
+  </small>
+  <div class="room__turn-signal" [ngClass]="{ 'current-turn': gameState.myTurn }">It's your turn!</div>
 </section>

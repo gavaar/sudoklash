@@ -1,14 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink, RouterOutlet } from '@angular/router';
-import { UserService } from './services';
+import { RouterLink, RouterOutlet } from '@angular/router';
+import { HeaderComponent } from './components/header/header.component';
 
 @Component({
   selector: 'sudo-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink],
+  imports: [CommonModule, RouterOutlet, RouterLink, HeaderComponent],
   template: `
-    <header (click)="goHome()">Hello {{ (user$ | async)?.name }}</header>
+    <sudo-header></sudo-header>
     <main>
       <router-outlet></router-outlet>
     </main>
@@ -16,21 +16,7 @@ import { UserService } from './services';
   `,
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit {
-  user$ = this.userService.user$;
-
-  constructor(private userService: UserService, private router: Router) {}
-
-  ngOnInit(): void {
-    this.userService.init().subscribe();
-  }
-
-  goHome() {
-    if (confirm('Go back home?')) {
-      this.router.navigate(['/']);
-    }
-  }
-
+export class AppComponent {
   linkToGithub(): void {
     window.open('https://github.com/gavaar', '_blank');
   }

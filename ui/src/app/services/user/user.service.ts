@@ -26,9 +26,11 @@ export class UserService {
     if (token) localStorage.setItem('sudo_token', token);
   }
 
-  constructor(private https: HttpClient) {}
+  constructor(private https: HttpClient) {
+    this.init().subscribe();
+  }
 
-  init(): Observable<User> {
+  private init(): Observable<User> {
     if (this.initialized) {
       return of(this.user!);
     }

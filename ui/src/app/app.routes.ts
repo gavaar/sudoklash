@@ -21,8 +21,16 @@ export const routes: Routes = [
   {
     path: 'room',
     children: [
-      { path: ':id', loadComponent: () => import('./routes/room/room.component').then(c => c.RoomComponent), resolve: { room: roomServiceInitializer } },
-      { path: '', loadComponent: () => import('./routes/room/room.component').then(c => c.RoomComponent), resolve: { room: roomServiceInitializer } },
+      {
+        path: ':id',
+        loadComponent: () => import('./routes/room/room.component').then(c => c.RoomComponent),
+        resolve: { room: roomServiceInitializer },
+      },
+      {
+        path: '',
+        loadComponent: () => import('./routes/room/room.component').then(c => c.RoomComponent),
+        resolve: { room: roomServiceInitializer },
+      },
     ],
     canActivateChild: [userGuard],
   },

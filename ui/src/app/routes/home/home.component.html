@@ -1,0 +1,23 @@
+<h1 class="home__title">Hit or dead</h1>
+<p class="home__text">
+  Choose a four digit number, play against a friend,
+  try to guess theirs before they guess yours.
+</p>
+<button class="home__button home__how-to-play"
+  routerLink="how-to-play">
+  How to play
+</button>
+<button *ngIf="roomId as room"
+  class="home__button home__back-to-room"
+  [routerLink]="'/room/' + roomId">
+  Back to last game
+</button>
+<button class="home__button home__new-game-button"
+  [ngClass]="{ small: roomId }"
+  routerLink="room">
+  New game
+</button>
+<img class="home__img"
+  src="/assets/images/game.png"
+  alt="game image"
+/>
