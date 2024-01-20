@@ -1,9 +1,6 @@
 use std::{collections::HashMap, time::Instant};
-
 use actix::prelude::*;
 use uuid::Uuid;
-use serde::Serialize;
-
 use super::{
   ws::{GameSocket, UserSocket},
   messages::{
@@ -12,39 +9,30 @@ use super::{
   },
   Game, Turn, GameStatus
 };
-
-#[derive(Serialize, Clone, Debug)]
-pub struct RoomUser {
-  id: String,
-  username: String,
-  avatar: String,
-  #[serde(skip_serializing)]
-  addr: Addr<UserSocket>,
-  #[serde(skip_serializing)]
-  pub join_date: Instant,
-}
+mod room_user;
+pub use room_user::RoomUser;
 
 pub struct Room {
-  pub id: Uuid,
+  pub id: String,
   pub game: Game,
   pub users: HashMap<String, RoomUser>,
   pub gamers: HashMap<String, Addr<GameSocket>>,
+  user_history: HashMap<String, RoomUser>,
 }
 impl Default for Room {
   fn default() -> Self {
     Room {
-      id: Uuid::new_v4(),
-      game: Game::new(),
+      id: Uuid::new_v4().to_string(),
+      game: Game::default(),
       users: HashMap::new(),
       gamers: HashMap::new(),
+      user_history: HashMap::new(),
     }
   }
 }
-
 impl Actor for Room {
   type Context = Context<Self>;
 }
-
 impl Handler<Player> for Room {
   type Result = ();
 
@@ -53,7 +41,6 @@ impl Handler<Player> for Room {
     self.send_game_update();
   }
 }
-
 impl Handler<Turn> for Room {
   type Result = ();
 
@@ -65,7 +52,6 @@ impl Handler<Turn> for Room {
     }
   }
 }
-
 impl Handler<UserConnect<GameSocket>> for Room {
   type Result = ();
 
@@ -74,42 +60,47 @@ impl Handler<UserConnect<GameSocket>> for Room {
     self.send_game_update();
   }
 }
-
 impl Handler<UserConnect<UserSocket>> for Room {
   type Result = ();
 
   fn handle(&mut self, user_connect_user_socket: UserConnect<UserSocket>, _: &mut Self::Context) -> Self::Result {
-    if self.users.len() > 5 {
+    if self.users.len() > 9 {
       eprintln!("Room is full");
       return;
     }
 
-    let room_user = RoomUser {
-      id: user_connect_user_socket.user.id.to_owned(),
-      avatar: user_connect_user_socket.user.photo.to_owned(),
-      username: user_connect_user_socket.user.name.to_owned(),
-      join_date: Instant::now(),
-      addr: user_connect_user_socket.socket_addr.to_owned(),
+    let room_user = if self.user_history.contains_key(&user_connect_user_socket.user.id) {
+      let mut user = self.user_history.remove(&user_connect_user_socket.user.id).expect("this should not fail");
+      user.addr = user_connect_user_socket.socket_addr.to_owned();
+      user
+    } else {
+      RoomUser {
+        join_date: Instant::now(),
+        id: user_connect_user_socket.user.id.to_owned(),
+        avatar: user_connect_user_socket.user.photo.to_owned(),
+        username: user_connect_user_socket.user.name.to_owned(),
+        addr: user_connect_user_socket.socket_addr.to_owned(),
+      }
     };
 
     self.users.insert(room_user.id.to_owned(), room_user);
-    
-    let bot_message = user_connect_user_socket.to_chat_message(self, "_ROOM_");
-    self.send_message(bot_message, None);
+    self.send_message(user_connect_user_socket.to_chat_message(self, "_ROOM_"), None);
   }
 }
-
 impl Handler<UserDisconnect> for Room {
   type Result = ();
 
   fn handle(&mut self, disconnect_msg: UserDisconnect, _: &mut Self::Context) -> Self::Result {
-    if let Some(_user) = self.users.remove(&disconnect_msg.user_id) {
-      let message = disconnect_msg.to_chat_message(self, "_ROOM_");
-      self.send_message(message, Some(&disconnect_msg.user_id));
-    }
+    let Some(removed_user) = self.users.remove(&disconnect_msg.user_id) else {
+      eprintln!("User was not connected to this room?");
+      return;
+    };
+    
+    self.gamers.remove(&disconnect_msg.user_id);
+    self.user_history.insert(removed_user.id.to_owned(), removed_user);
+    self.send_message(disconnect_msg.to_chat_message(self, "_ROOM_"), Some(&disconnect_msg.user_id));
   }
 }
-
 impl Handler<RoomChat> for Room {
   type Result = ();
 
@@ -117,7 +108,6 @@ impl Handler<RoomChat> for Room {
     self.send_message(connect_msg.to_chat_message(self, &connect_msg.user_id), None);
   }
 }
-
 impl Room {
   fn send_message(&self, message: ServerChat, id_to_skip: Option<&String>) {
     self.users.iter().for_each(|user| {
@@ -136,8 +126,8 @@ impl Room {
   fn close_game(&self) {
     self.gamers.iter().for_each(|gamer| {
       let user_id = gamer.0;
-      let username = self.users.get(user_id).unwrap().username.to_owned();
-      gamer.1.do_send(UserDisconnect { user_id: user_id.to_owned(), username });
+      let username = &self.users.get(user_id).unwrap().username;
+      gamer.1.do_send(UserDisconnect { user_id: user_id.to_owned(), username: username.to_owned() });
     });
   }
 }

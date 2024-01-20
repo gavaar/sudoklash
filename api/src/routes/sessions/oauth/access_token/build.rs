@@ -3,7 +3,7 @@ use jsonwebtoken::{Header, EncodingKey, encode};
 
 use crate::{environment::Environment, models::{TokenClaims, error::ErrorResponse}};
 
-pub fn build(user_id: &String, environment: &Environment) -> Result<String, ErrorResponse> {
+pub fn build<'a>(user_id: &'a String, environment: &Environment) -> Result<String, ErrorResponse<'a>> {
   let jwt_secret = environment.jwt_secret.to_owned();
   let now = Utc::now();
   let iat = now.timestamp() as usize;
@@ -18,5 +18,5 @@ pub fn build(user_id: &String, environment: &Environment) -> Result<String, Erro
     &Header::default(),
     &claims,
     &EncodingKey::from_secret(jwt_secret.as_ref())
-  ).map_err(|err| ErrorResponse::Unauthorized(err.to_string()))
+  ).map_err(|_| ErrorResponse::Unauthorized("Error encoding user claims"))
 }

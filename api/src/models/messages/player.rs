@@ -21,7 +21,7 @@ impl Player {
       id: String::from(""),
       avatar: String::from(""),
       username: String::from(""),
-      selection: 0u16,
+      selection: 0,
     }
   }
 }

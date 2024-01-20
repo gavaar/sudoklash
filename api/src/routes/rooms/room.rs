@@ -17,7 +17,8 @@ use super::JoinRoomRequest;
 #[get("")]
 #[get("/{room_id}")]
 pub async fn room(req: UserFromQueryParams, room_request: Path<JoinRoomRequest>, data: Data<AppState>, stream: Payload) -> Result<HttpResponse, Error> {
-  let join_room = find_or_create_room(&room_request.room_id, &mut data.rooms.lock().unwrap())?;
+  let mut rooms = data.rooms.lock().unwrap();
+  let join_room = find_or_create_room(&room_request.room_id, &mut rooms);
 
   let user_id = match user_uuid_from_req(&req) {
     Ok(uuid) => uuid,
@@ -25,7 +26,7 @@ pub async fn room(req: UserFromQueryParams, room_request: Path<JoinRoomRequest>,
   };
   let user: User = match data.users.lock().unwrap().iter().find(|user| user.id == user_id.to_string()) {
     Some(user) => user.to_owned(),
-    None => return Err(Error::from(ErrorResponse::NotFound("User from request token not found".to_string()))),
+    None => return Err(Error::from(ErrorResponse::NotFound("User from request token not found"))),
   };
 
   // todo: to be moved when I use a real db

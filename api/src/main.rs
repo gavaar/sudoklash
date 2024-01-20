@@ -17,7 +17,7 @@ async fn main() -> std::io::Result<()> {
     let app_data = web::Data::new(db);
     let client_origin = app_data.env.client_origin.to_owned();
 
-    println!("{}", format!("\n\n🚀 Server started successfully on {}:8080", &app_data.env.client_origin.as_str()));
+    println!("{}", format!("\n\n🚀 Server started successfully on {}:8080", &client_origin));
 
     HttpServer::new(move || {
         let cors = Cors::default()

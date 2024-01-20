@@ -11,35 +11,35 @@ struct ErrorBody {
 }
 
 #[derive(Debug)]
-pub enum ErrorResponse {
-  NotFound(String),
-  Unauthorized(String),
-  BadGateway(String),
+pub enum ErrorResponse<'a> {
+  NotFound(&'a str),
+  Unauthorized(&'a str),
+  BadGateway(&'a str),
 }
-impl ErrorResponse {
-  fn error_builder(&self) -> (u16, HttpResponseBuilder, String) {
+impl<'a> ErrorResponse<'a> {
+  fn error_builder(&self) -> (u16, HttpResponseBuilder, &str) {
     match self {
-      ErrorResponse::Unauthorized(message) => (401, HttpResponse::Unauthorized(), message.to_owned()),
-      ErrorResponse::NotFound(message) => (404, HttpResponse::NotFound(), message.to_owned()),
-      ErrorResponse::BadGateway(message) => (502, HttpResponse::BadGateway(), message.to_owned()),
+      ErrorResponse::Unauthorized(message) => (401, HttpResponse::Unauthorized(), message),
+      ErrorResponse::NotFound(message) => (404, HttpResponse::NotFound(), message),
+      ErrorResponse::BadGateway(message) => (502, HttpResponse::BadGateway(), message),
     }
   }
 
-  pub fn throw(&self) -> HttpResponse {
+  pub fn throw(&'a self) -> HttpResponse {
     let (status, mut response_builder, message) = self.error_builder();
-    let error_body = ErrorBody { status, message };
+    let error_body = ErrorBody { status, message: message.to_string() };
 
     response_builder.json(error_body)
   }
 }
 
-impl Display for ErrorResponse {
+impl<'a> Display for ErrorResponse<'a> {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
     let (status, _, message) = self.error_builder();
     write!(f, "{}: {}", status, message)
   }
 }
-impl ResponseError for ErrorResponse {
+impl<'a> ResponseError for ErrorResponse<'a> {
   fn error_response(&self) -> HttpResponse<BoxBody> {
     self.throw()
   }

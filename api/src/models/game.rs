@@ -21,9 +21,8 @@ pub struct Game {
   pub current_player_turn: bool,
   pub players: (Player, Player),
 }
-
-impl Game {
-  pub fn new() -> Game {
+impl Default for Game {
+  fn default() -> Self {
     Game {
       players: (Player::empty(), Player::empty()),
       history: Vec::new(),
@@ -31,7 +30,8 @@ impl Game {
       game_status: GameStatus::Awaiting,
     }
   }
-
+}
+impl Game {
   pub fn assing_player(&mut self, player: Player) {
     if self.players.0.id == player.id ||
        self.players.1.id == player.id {
@@ -49,6 +49,7 @@ impl Game {
     }
   }
 
+  // TODO: lot's of cloning here
   pub fn play_turn(&mut self, mut new_turn: Turn) {
     if self.game_status == GameStatus::Awaiting {
       eprintln!("Game has not started!!");

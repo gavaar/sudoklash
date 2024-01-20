@@ -19,7 +19,6 @@ pub struct GameSocket {
   room_addr: Addr<Room>,
   hb: Instant,
 }
-
 impl GameSocket {
   pub fn new(user: User, room_addr: Addr<Room>) -> GameSocket {
     GameSocket {
@@ -44,7 +43,6 @@ impl GameSocket {
     });
   }
 }
-
 impl Actor for GameSocket {
   type Context = WebsocketContext<Self>;
 
@@ -67,7 +65,6 @@ impl Actor for GameSocket {
       .wait(ctx);
   }
 }
-
 impl Handler<Tick> for GameSocket {
   type Result = ();
 
@@ -76,7 +73,6 @@ impl Handler<Tick> for GameSocket {
     ctx.text(message);
   }
 }
-
 impl Handler<UserDisconnect> for GameSocket {
   type Result = ();
 
@@ -84,7 +80,6 @@ impl Handler<UserDisconnect> for GameSocket {
     ctx.stop();
   }
 }
-
 impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for GameSocket {
   fn handle(&mut self, item: Result<ws::Message, ws::ProtocolError>, ctx: &mut Self::Context) {
     let msg = match item {

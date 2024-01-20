@@ -1,7 +1,6 @@
 use std::{sync::{Arc, Mutex}, collections::HashMap};
 
 use actix::Addr;
-use uuid::Uuid;
 
 use crate::{
   models::{
@@ -13,7 +12,7 @@ use crate::{
 
 pub struct AppState {
   pub users: Arc<Mutex<Vec<User>>>,
-  pub rooms: Arc<Mutex<HashMap<Uuid, Addr<Room>>>>,
+  pub rooms: Arc<Mutex<HashMap<String, Addr<Room>>>>,
   pub env: Environment,
 }
 impl AppState {

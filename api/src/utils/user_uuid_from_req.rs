@@ -2,14 +2,14 @@ use uuid::Uuid;
 
 use crate::{guards::UserFromQueryParams, models::error::ErrorResponse};
 
-pub fn user_uuid_from_req(req: &UserFromQueryParams) -> Result<Uuid, ErrorResponse> {
-  let user_id = match &req.user_id {
-    Some(id) => match Uuid::parse_str(&id) {
-      Ok(uuid) => uuid,
-      Err(err) => return Err(ErrorResponse::BadGateway(err.to_string())),
-    },
-    None => return Err(ErrorResponse::Unauthorized(String::from("No token was found from room request"))),
+pub fn user_uuid_from_req(req: &UserFromQueryParams) -> Result<String, ErrorResponse<'static>> {
+  let Some(found_token_id) = &req.user_id else {
+    return Err(ErrorResponse::Unauthorized("No token was found from room request"));
   };
 
-  Ok(user_id)
+  if Uuid::parse_str(&found_token_id).is_err() {
+    return Err(ErrorResponse::Unauthorized("Wrong token format"));
+  }
+
+  return Ok(found_token_id.to_owned());
 }

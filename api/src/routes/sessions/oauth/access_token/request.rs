@@ -5,17 +5,17 @@ use crate::{
   environment::Environment,
 };
 
-pub async fn request(
-  authorization_code: &str,
+pub async fn request<'a>(
+  authorization_code: &'a str,
   environment: &Environment,
-) -> Result<OAuthResponse, ErrorResponse> {
+) -> Result<OAuthResponse, ErrorResponse<'a>> {
   if authorization_code.is_empty() {
-    return Err(ErrorResponse::Unauthorized("Code to request token was invalid or empty".to_string()));
+    return Err(ErrorResponse::Unauthorized("Code to request token was invalid or empty"));
   }
 
-  let redirect_url = environment.google_oauth_redirect_url.to_owned();
-  let client_secret = environment.google_oauth_client_secret.to_owned();
-  let client_id = environment.google_oauth_client_id.to_owned();
+  let redirect_url = &environment.google_oauth_redirect_url;
+  let client_secret = &environment.google_oauth_client_secret;
+  let client_id = &environment.google_oauth_client_id;
   let root_url = "https://oauth2.googleapis.com/token";
   let client = Client::new();
 
@@ -31,9 +31,9 @@ pub async fn request(
     .form(&params)
     .send()
     .await
-    .map_err(|err| ErrorResponse::BadGateway(err.to_string()))?;
+    .map_err(|_| ErrorResponse::BadGateway("Error posting token to Google"))?;
 
   response.json::<OAuthResponse>()
     .await
-    .map_err(|_| ErrorResponse::BadGateway("Something went wrong when retrieving access token".to_owned()))
+    .map_err(|_| ErrorResponse::BadGateway("Something went wrong when retrieving access token"))
 }

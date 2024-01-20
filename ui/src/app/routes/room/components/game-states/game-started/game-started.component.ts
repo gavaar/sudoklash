@@ -21,7 +21,7 @@ export class GameStartedComponent {
       return { isSitting: false, isPlayerTurn: false };
     }
 
-    const isSitting = room.users.slice(0, 2).find(u => u.id === this.userService.user?.id) != null;
+    const isSitting = game.players.find(p => p.id === this.userService.user?.id) != null;
     const currentTurnPlayerId = game.players[game.current_player_turn ? 0 : 1].id;
     const isPlayerTurn = currentTurnPlayerId === this.userService.user?.id;
 
