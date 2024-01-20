@@ -10,11 +10,12 @@ import { TurnMessageComponent } from './messages/turn-message.component';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { filter } from 'rxjs';
 
+const DEPENDENCIES = [NgIf, NgFor, NgClass, NgSwitch, NgSwitchCase, DatePipe, ReactiveFormsModule, SendButtonComponent, UserMessageComponent, ServerMessageComponent, TurnMessageComponent];
 const SERVER_AUTHOR = '_ROOM_';
 
 @Component({
   standalone: true,
-  imports: [NgIf, NgFor, NgClass, NgSwitch, NgSwitchCase, DatePipe, ReactiveFormsModule, SendButtonComponent, UserMessageComponent, ServerMessageComponent, TurnMessageComponent],
+  imports: DEPENDENCIES,
   selector: 'game-chat',
   templateUrl: './game-chat.component.html',
   styleUrls: ['./game-chat.component.scss'],

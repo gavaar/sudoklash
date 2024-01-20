@@ -59,7 +59,7 @@ export class RoomComponent implements OnDestroy {
   private isMyTurn(game: { current_player_turn: boolean; players: [{ id: string }, { id: string }] } | null): boolean {
     if (!game) return false;
 
-    return game.players[game.current_player_turn ? 0 : 1].id === this.userService.user?.id;
+    return game.players[+(!game.current_player_turn)].id === this.userService.user?.id;
   }
 
   private disableBrowserBackBehavior(): void {

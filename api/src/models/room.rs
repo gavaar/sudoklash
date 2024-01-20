@@ -97,7 +97,11 @@ impl Handler<UserDisconnect> for Room {
     };
     
     self.gamers.remove(&disconnect_msg.user_id);
-    self.user_history.insert(removed_user.id.to_owned(), removed_user);
+
+    if self.game.game_status == GameStatus::Started {
+      // remember users after game starts. This should be updated to never forget joined users.
+      self.user_history.insert(removed_user.id.to_owned(), removed_user);
+    }
     self.send_message(disconnect_msg.to_chat_message(self, "_ROOM_"), Some(&disconnect_msg.user_id));
   }
 }
