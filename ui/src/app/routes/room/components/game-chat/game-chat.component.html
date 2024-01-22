@@ -26,7 +26,7 @@
 <div class="game-chat__input">
   <textarea type="text"
     class="game-chat__textarea"
-    placeholder="I can't believe it!..."
+    placeholder="Say something nice..."
     [formControl]="chatControl"
     (keydown.enter)="$event.preventDefault(); sendMessage()"></textarea>
   <sudo-send-button 

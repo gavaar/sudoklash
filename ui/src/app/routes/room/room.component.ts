@@ -27,6 +27,7 @@ export class RoomComponent implements OnDestroy {
     return {
       status: game?.game_status,
       myTurn: this.isMyTurn(game),
+      oponent: game?.players.find(p => p.id !== this.userService.user?.id),
     }
   });
 
