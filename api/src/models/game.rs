@@ -17,8 +17,7 @@ pub enum GameStatus {
 pub struct Game {
   pub history: Vec<Turn>,
   pub game_status: GameStatus,
-  // true = self.players.0, false = self.players.1
-  pub current_player_turn: bool,
+  pub current_player_turn: bool, // true = 1, false = 0
   pub players: (Player, Player),
 }
 impl Default for Game {

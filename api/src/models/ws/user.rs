@@ -87,21 +87,17 @@ impl Handler<ServerChat> for UserSocket {
 
 impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for UserSocket {
   fn handle(&mut self, item: Result<ws::Message, ws::ProtocolError>, ctx: &mut Self::Context) {
-    let msg = match item {
-      Err(_) => {
-        ctx.stop();
-        return;
-      }
-      Ok(msg) => msg
+    let Ok(msg) = item else {
+      ctx.stop();
+      return;
     };
 
     match msg {
       ws::Message::Text(text) => {
-        let message: UserMessage = match serde_json::from_str(text.to_string().as_str()) {
-          Ok(msg) => msg,
-          Err(e) => return eprintln!("{:#?}", e),
+        let Ok(UserMessage { message }) = serde_json::from_str(text.to_string().as_str()) else {
+          return eprintln!("user message not understood");
         };
-        let _ = self.room_addr.do_send(RoomChat { user_id: self.user.id.to_owned(), message: message.message });
+        self.room_addr.do_send(RoomChat { user_id: self.user.id.to_owned(), message });
       }
       ws::Message::Ping(ping_msg) => {
         self.hb = Instant::now();

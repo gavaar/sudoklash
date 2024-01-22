@@ -27,9 +27,11 @@ export enum GameStatus {
   Ended = "Ended",
 }
 interface GameUserConnect {
+  type: 'PlayerConnect',
   selection?: number;
 }
 interface GameUserTurn {
+  type: 'Turn',
   play: string;
   user_id: string;
 }
@@ -100,13 +102,13 @@ export class RoomWsService {
 
   // GAME
   playerConnect(selection: number): void {
-    this.gameWs.next({ selection });
+    this.gameWs.next({ type: 'PlayerConnect', selection });
     this._playerSelectionMem = selection.toString();
     this.playerSelection.set(this._playerSelectionMem);
   }
 
   playTurn(turn: string): void {
-    this.gameWs.next({ play: turn, user_id: this.userService.user!.id });
+    this.gameWs.next({ type: 'Turn', play: turn, user_id: this.userService.user!.id });
   }
 
   private connectSignals(): void {

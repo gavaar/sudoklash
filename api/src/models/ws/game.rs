@@ -2,6 +2,7 @@ use std::time::{Instant, Duration};
 
 use actix::prelude::*;
 use actix_web_actors::ws::{WebsocketContext, self};
+use serde::Deserialize;
 
 use crate::models::{
   messages::{PlayerConnect, Player, UserConnect, Tick, UserDisconnect},
@@ -12,6 +13,13 @@ use crate::models::{
 
 const HEARTBEAT_INTERVAL: Duration = Duration::from_secs(5);
 const CLIENT_TIMEOUT: Duration = Duration::from_secs(10);
+
+#[derive(Deserialize)]
+#[serde(tag = "type")]
+enum GameMessage {
+  Turn(Turn),
+  PlayerConnect(PlayerConnect),
+}
 
 // separate game (state) from gamers (socket)
 pub struct GameSocket {
@@ -80,37 +88,32 @@ impl Handler<UserDisconnect> for GameSocket {
     ctx.stop();
   }
 }
+
 impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for GameSocket {
   fn handle(&mut self, item: Result<ws::Message, ws::ProtocolError>, ctx: &mut Self::Context) {
-    let msg = match item {
-      Err(_) => {
-        ctx.stop();
-        return;
-      }
-      Ok(msg) => msg
+    let Ok(msg) = item else {
+      ctx.stop();
+      return;
     };
 
     match msg {
       ws::Message::Text(text) => {
-        let turn_result: Result<Turn, _> = serde_json::from_str(text.to_string().as_str());
-        if let Ok(turn) = turn_result {
-          self.room_addr.do_send(turn);
-          return;
+        let Ok(understood_message) = serde_json::from_str(text.to_string().as_str()) else {
+          return eprintln!("game message not understood");
+        };
+  
+        match understood_message {
+          GameMessage::Turn(turn) => self.room_addr.do_send(turn),
+          GameMessage::PlayerConnect(player_connect) => {
+            let player = Player {
+              id: self.user.id.to_owned(),
+              avatar: self.user.photo.to_owned(),
+              username: self.user.name.to_owned(),
+              selection: player_connect.selection,
+            };
+            self.room_addr.do_send(player);
+          }
         }
-
-        let connect_result: Result<PlayerConnect, _> = serde_json::from_str(text.to_string().as_str());
-        if let Ok(connect) = connect_result {
-          let player = Player {
-            id: self.user.id.to_owned(),
-            avatar: self.user.photo.to_owned(),
-            username: self.user.name.to_owned(),
-            selection: connect.selection,
-          };
-          self.room_addr.do_send(player);
-          return;
-        }
-
-        eprintln!("Game message was not understood");
       }
       ws::Message::Ping(ping_msg) => {
         self.hb = Instant::now();
