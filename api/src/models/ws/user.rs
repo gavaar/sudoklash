@@ -1,4 +1,4 @@
-use std::time::{Instant, Duration};
+use std::time::Instant;
 
 use actix::prelude::*;
 use actix_web_actors::ws;
@@ -11,8 +11,7 @@ use crate::models::{
 
 use crate::models::auth::User;
 
-const HEARTBEAT_INTERVAL: Duration = Duration::from_secs(5);
-const CLIENT_TIMEOUT: Duration = Duration::from_secs(10);
+use super::traits::DefaultHandler;
 
 #[derive(Deserialize)]
 struct UserMessage {
@@ -24,28 +23,11 @@ pub struct UserSocket {
   hb: Instant,
   room_addr: Addr<Room>,
 }
-
 impl UserSocket {
   pub fn new(user: User, room_addr: Addr<Room>) -> UserSocket {
     UserSocket { user, room_addr, hb: Instant::now() }
   }
-
-  // logic duplicated in game_socket. Extract?
-  pub fn hb(&self, ctx: &mut ws::WebsocketContext<Self>) {
-    ctx.run_interval(HEARTBEAT_INTERVAL, |act, ctx| {
-      if Instant::now().duration_since(act.hb) > CLIENT_TIMEOUT {
-          println!("Coyo e su badre, se desconecto el menor!");
-
-          ctx.stop();
-
-          return;
-      }
-
-      ctx.ping(b"ping");
-    });
-  }
 }
-
 impl Actor for UserSocket {
   type Context = ws::WebsocketContext<Self>;
 
@@ -75,7 +57,6 @@ impl Actor for UserSocket {
     Running::Stop
   }
 }
-
 impl Handler<ServerChat> for UserSocket {
   type Result = ();
   
@@ -84,37 +65,19 @@ impl Handler<ServerChat> for UserSocket {
     ctx.text(ws_message);
   }
 }
-
 impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for UserSocket {
   fn handle(&mut self, item: Result<ws::Message, ws::ProtocolError>, ctx: &mut Self::Context) {
-    let Ok(msg) = item else {
-      ctx.stop();
-      return;
-    };
+    self.default_handler(ctx, item);
+  }
+}
+impl DefaultHandler for UserSocket {
+  fn get_hb(&self) -> Instant { self.hb }
+  fn set_hb(&mut self, instant: Instant) { self.hb = instant; }
 
-    match msg {
-      ws::Message::Text(text) => {
-        let Ok(UserMessage { message }) = serde_json::from_str(text.to_string().as_str()) else {
-          return eprintln!("user message not understood");
-        };
-        self.room_addr.do_send(RoomChat { user_id: self.user.id.to_owned(), message });
-      }
-      ws::Message::Ping(ping_msg) => {
-        self.hb = Instant::now();
-        ctx.pong(&ping_msg);
-      }
-      ws::Message::Pong(_) => {
-        self.hb = Instant::now();
-      }
-      ws::Message::Binary(bin) => ctx.binary(bin),
-      ws::Message::Close(reason) => {
-        ctx.close(reason);
-        ctx.stop();
-      }
-      ws::Message::Continuation(_) => {
-        ctx.stop();
-      }
-      ws::Message::Nop => (),
-    }
+  fn text_handler(&self, text: impl ToString) {
+    let Ok(UserMessage { message }) = serde_json::from_str(text.to_string().as_str()) else {
+      return eprintln!("user message not understood");
+    };
+    self.room_addr.do_send(RoomChat { user_id: self.user.id.to_owned(), message });
   }
 }

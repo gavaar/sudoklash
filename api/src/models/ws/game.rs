@@ -3,6 +3,7 @@ use std::time::{Instant, Duration};
 use actix::prelude::*;
 use actix_web_actors::ws::{WebsocketContext, self};
 use serde::Deserialize;
+use super::traits::DefaultHandler;
 
 use crate::models::{
   messages::{PlayerConnect, Player, UserConnect, Tick, UserDisconnect},
@@ -88,49 +89,31 @@ impl Handler<UserDisconnect> for GameSocket {
     ctx.stop();
   }
 }
-
 impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for GameSocket {
   fn handle(&mut self, item: Result<ws::Message, ws::ProtocolError>, ctx: &mut Self::Context) {
-    let Ok(msg) = item else {
-      ctx.stop();
-      return;
+    self.default_handler(ctx, item);
+  }
+}
+impl DefaultHandler for GameSocket {
+  fn get_hb(&self) -> Instant { self.hb }
+  fn set_hb(&mut self, instant: Instant) { self.hb = instant; }
+
+  fn text_handler(&self, text: impl ToString) {
+    let Ok(understood_message) = serde_json::from_str(text.to_string().as_str()) else {
+      return eprintln!("game message not understood");
     };
 
-    match msg {
-      ws::Message::Text(text) => {
-        let Ok(understood_message) = serde_json::from_str(text.to_string().as_str()) else {
-          return eprintln!("game message not understood");
+    match understood_message {
+      GameMessage::Turn(turn) => self.room_addr.do_send(turn),
+      GameMessage::PlayerConnect(player_connect) => {
+        let player = Player {
+          id: self.user.id.to_owned(),
+          avatar: self.user.photo.to_owned(),
+          username: self.user.name.to_owned(),
+          selection: player_connect.selection,
         };
-  
-        match understood_message {
-          GameMessage::Turn(turn) => self.room_addr.do_send(turn),
-          GameMessage::PlayerConnect(player_connect) => {
-            let player = Player {
-              id: self.user.id.to_owned(),
-              avatar: self.user.photo.to_owned(),
-              username: self.user.name.to_owned(),
-              selection: player_connect.selection,
-            };
-            self.room_addr.do_send(player);
-          }
-        }
+        self.room_addr.do_send(player);
       }
-      ws::Message::Ping(ping_msg) => {
-        self.hb = Instant::now();
-        ctx.pong(&ping_msg);
-      }
-      ws::Message::Pong(_) => {
-        self.hb = Instant::now();
-      }
-      ws::Message::Binary(bin) => ctx.binary(bin),
-      ws::Message::Close(reason) => {
-        ctx.close(reason);
-        ctx.stop();
-      }
-      ws::Message::Continuation(_) => {
-        ctx.stop();
-      }
-      ws::Message::Nop => (),
     }
   }
 }
