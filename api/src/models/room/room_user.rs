@@ -1,6 +1,5 @@
-use std::time::Instant;
-
 use actix::Addr;
+use chrono::{DateTime, Utc};
 use serde::Serialize;
 
 use crate::models::ws::UserSocket;
@@ -13,5 +12,5 @@ pub struct RoomUser {
   #[serde(skip_serializing)]
   pub addr: Addr<UserSocket>,
   #[serde(skip_serializing)]
-  pub join_date: Instant,
+  pub join_date: DateTime<Utc>,
 }

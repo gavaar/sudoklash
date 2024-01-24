@@ -17,6 +17,6 @@ export class HomeComponent implements OnInit {
   constructor(private roomService: RoomWsService) {}
 
   ngOnInit(): void {
-    this.roomId = this.roomService.room()?.room_id;
+    this.roomId = this.roomService.room()?.id;
   }
 }

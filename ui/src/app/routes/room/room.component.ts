@@ -1,6 +1,6 @@
 import { NgClass, NgIf, NgSwitch, NgSwitchCase } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnDestroy, computed, signal } from '@angular/core';
-import { GameStatus, RoomWsService } from 'src/app/services/websocket/room.wsService';
+import { GameStates, RoomWsService } from 'src/app/services/websocket/room.wsService';
 import { UserListComponent } from './components/user-list/user-list.component';
 import { GameChatComponent } from './components/game-chat/game-chat.component';
 import { GameStartedComponent, GameAwaitingComponent } from './components/game-states';
@@ -17,17 +17,17 @@ import { AsyncSubject, fromEvent, takeUntil } from 'rxjs';
 export class RoomComponent implements OnDestroy {
   private _destroy = new AsyncSubject();
 
-  GameStatus = GameStatus;
+  GameStates = GameStates;
   showCopyMessage = true;
   copyAddressMessage = signal('Click to copy this room address');
   playerSelection = this.roomService.playerSelection;
 
   gameState = computed(() => {
-    const game = this.roomService.game();
+    const room = this.roomService.room();
     return {
-      status: game?.game_status,
-      myTurn: this.isMyTurn(game),
-      oponent: game?.players.find(p => p.id !== this.userService.user?.id),
+      status: room.game.game_status,
+      myTurn: this.isMyTurn(room.game),
+      oponent: room?.game.players.find(p => p.id !== this.userService.user?.id),
     }
   });
 

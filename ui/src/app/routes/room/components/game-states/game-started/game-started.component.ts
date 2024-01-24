@@ -14,15 +14,10 @@ import { UserService } from 'src/app/services';
 })
 export class GameStartedComponent {
   gameState = computed(() => {
-    const room = this.roomService.room();
-    const game = this.roomService.game();
-
-    if (!game || !room) {
-      return { isSitting: false, isPlayerTurn: false };
-    }
+    const game = this.roomService.room().game;
 
     const isSitting = game.players.find(p => p.id === this.userService.user?.id) != null;
-    const currentTurnPlayerId = game.players[game.current_player_turn ? 0 : 1].id;
+    const currentTurnPlayerId = game.players[+(!game.current_player_turn)].id;
     const isPlayerTurn = currentTurnPlayerId === this.userService.user?.id;
 
     return { isSitting, isPlayerTurn };

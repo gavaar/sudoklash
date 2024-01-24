@@ -15,11 +15,10 @@ export class UserListComponent {
   opened = signal(false);
 
   userMessage = this.roomService.room;
-  gameMessage = this.roomService.game;
 
   restUsers = computed(() => {
-    const users = this.userMessage()?.users;
-    if (!this.opened() || !users)  {
+    const users = this.userMessage().users;
+    if (!this.opened())  {
       return [];
     }
     

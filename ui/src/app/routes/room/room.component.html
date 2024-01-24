@@ -10,14 +10,14 @@
 
   <ng-container [ngSwitch]="gameState.status">
     <!-- todo: combine awaiting and started in one -->
-    <game-awaiting *ngSwitchCase="GameStatus.Awaiting"></game-awaiting>
-    <ng-container *ngSwitchCase="GameStatus.Started">
+    <game-awaiting *ngSwitchCase="GameStates.Awaiting"></game-awaiting>
+    <ng-container *ngSwitchCase="GameStates.Started">
       <game-started>Started!</game-started>
     </ng-container>
-    <!-- <div *ngSwitchCase="GameStatus.Ended">Ended!</div> -->
+    <!-- <div *ngSwitchCase="GameStates.Ended">Ended!</div> -->
   </ng-container>
 
-  <small *ngIf="gameState.status != GameStatus.Ended && playerSelection() as selection"
+  <small *ngIf="gameState.status != GameStates.Ended && playerSelection() as selection"
     class="room__selection">
     You selected: {{ selection }}
   </small>

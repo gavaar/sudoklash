@@ -16,14 +16,13 @@ import { UserService } from 'src/app/services';
 export class GameAwaitingComponent {
   gameState = computed(() => {
     const room = this.roomService.room();
-    const game = this.roomService.game();
 
-    if (!room || !game) {
+    if (!room) {
       return { isSitting: false, alreadyJoined: false };
     }
 
     const isSitting = room.users.slice(0, 2).find(u => u.id === this.userService.user?.id) != null;
-    const alreadyJoined = game.players.find(p => p.id === this.userService.user?.id) != null;
+    const alreadyJoined = room.game.players.find(p => p.id === this.userService.user?.id) != null;
 
     return { isSitting, alreadyJoined };
   });

@@ -3,7 +3,7 @@ use std::collections::HashSet;
 use chrono::Utc;
 use serde::Serialize;
 
-use super::{messages::Player, turn::Turn};
+use super::messages::{Player, Turn};
 
 #[derive(PartialEq, Serialize, Clone)]
 pub enum GameStatus {
@@ -31,20 +31,24 @@ impl Default for Game {
   }
 }
 impl Game {
-  pub fn assing_player(&mut self, player: Player) {
+  // return true if user could join
+  pub fn assing_player(&mut self, player: Player) -> bool {
     if self.players.0.id == player.id ||
        self.players.1.id == player.id {
       eprintln!("You have already joined!");
-      return;
+      return false;
     }
 
     if self.players.0.id.is_empty() {
       self.players.0 = player;
+      return true;
     } else if self.players.1.id.is_empty() {
       self.players.1 = player;
       self.game_status = GameStatus::Started;
+      return true;
     } else {
       eprintln!("Can't join game: two users are already playing");
+      return false;
     }
   }
 
@@ -75,7 +79,7 @@ impl Game {
     }
 
     new_turn.hit_dead_against_selection(enemy_player.selection);
-    new_turn.played_at = Utc::now();
+    new_turn.sent_at = Utc::now();
 
     if new_turn.result.1 == 4 {
       self.game_status = GameStatus::Ended;

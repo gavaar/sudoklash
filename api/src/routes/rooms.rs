@@ -2,7 +2,6 @@ use actix_web::{web, Responder};
 use actix_web::{get, HttpResponse};
 use serde_json::json;
 
-mod game;
 mod join_room_request;
 mod room;
 
@@ -16,7 +15,6 @@ async fn ping() -> impl Responder {
 pub fn routes(conf: &mut web::ServiceConfig) {
   let scope = web::scope("/rooms")
     .service(ping)
-    .service(game::game)
     .service(room::room);
 
   conf.service(scope);

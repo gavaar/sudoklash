@@ -1,39 +1,37 @@
 <ng-container *ngIf="userMessage() as userMessage">
-  <ng-container *ngIf="gameMessage() as gameMessage">
-    <div class="user-list__players" *ngIf="gameMessage.players as players">
-      <div *ngIf="userMessage.users[0] as user; else notconnected"
-        class="user-list__player"
-        [ngClass]="{ selected: players[0].id === user.id || players[1].id === user.id }">
-        <sudo-nameplate [user]="user"></sudo-nameplate>
-        <small *ngIf="players[0].id != user.id && players[1].id != user.id"
-          class="user-list__selecting-number">
-          Selecting number...
-        </small>
-      </div>
-
-      <div *ngIf="userMessage.users[1] as user; else notconnected"
-        class="user-list__player">
-        <sudo-nameplate [user]="user"></sudo-nameplate>
-        <small *ngIf="players[0].id != user.id && players[1].id != user.id"
-          class="user-list__selecting-number">
-          Selecting number...
-        </small>
-      </div>
-
-      <div *ngFor="let user of restUsers(); trackBy: restUsersFn"
-        class="user-list__player">
-        <sudo-nameplate [user]="user"></sudo-nameplate>
-      </div>
+  <div class="user-list__players" *ngIf="userMessage.game.players as players">
+    <div *ngIf="userMessage.users[0] as user; else notconnected"
+      class="user-list__player"
+      [ngClass]="{ selected: players[0].id === user.id || players[1].id === user.id }">
+      <sudo-nameplate [user]="user"></sudo-nameplate>
+      <small *ngIf="players[0].id != user.id && players[1].id != user.id"
+        class="user-list__selecting-number">
+        Selecting number...
+      </small>
     </div>
-    <div *ngIf="userMessage.users.length > 2"
-      class="user-list__open-button"
-      (click)="opened.set(!opened())">
-      <div class="user-list__open-button-arrow"
-        [ngClass]="{ open: opened() }">
-        ➧
-      </div>
+
+    <div *ngIf="userMessage.users[1] as user; else notconnected"
+      class="user-list__player">
+      <sudo-nameplate [user]="user"></sudo-nameplate>
+      <small *ngIf="players[0].id != user.id && players[1].id != user.id"
+        class="user-list__selecting-number">
+        Selecting number...
+      </small>
     </div>
-  </ng-container>
+
+    <div *ngFor="let user of restUsers(); trackBy: restUsersFn"
+      class="user-list__player">
+      <sudo-nameplate [user]="user"></sudo-nameplate>
+    </div>
+  </div>
+  <div *ngIf="userMessage.users.length > 2"
+    class="user-list__open-button"
+    (click)="opened.set(!opened())">
+    <div class="user-list__open-button-arrow"
+      [ngClass]="{ open: opened() }">
+      ➧
+    </div>
+  </div>
 </ng-container>
 
 <ng-template #notconnected>

@@ -1,8 +1,50 @@
 import { Injectable, signal } from '@angular/core';
 import { UserService } from '../user';
-import { Observable, filter, take, tap } from 'rxjs';
+import { Observable, take, tap } from 'rxjs';
 import { WebSocketManager } from './websocket-manager';
 import { environment } from 'src/environments/environment';
+
+enum UserMessages {
+  UserChat = 'UserChat',
+  PlayerConnect = 'PlayerConnect',
+  Turn = 'Turn',
+}
+
+export enum GameStates {
+  Awaiting = "Awaiting",
+  Started = "Started",
+  Ended = "Ended",
+}
+
+interface UserChat {
+  type: UserMessages.UserChat,
+  message: string;
+}
+
+interface PlayerConnect {
+  type: UserMessages.PlayerConnect,
+  selection?: number;
+}
+export interface Turn {
+  type: UserMessages.Turn,
+  play: string;
+  user_id: string;
+  result: [number, number];
+  sent_at: string; // Date
+}
+
+export interface Game {
+  history: Turn[];
+  game_status: GameStates;
+  current_player_turn: boolean;
+  players: [RoomUser, RoomUser]
+}
+
+export interface RoomChat {
+  user_id: string;
+  message: string;
+  sent_at: string; // Date
+}
 
 export interface RoomUser {
   id: string;
@@ -10,49 +52,35 @@ export interface RoomUser {
   avatar: string;
 }
 
-export interface RoomMessage {
-  message: string;
-  room_id: string;
+export interface RoomUpdate {
+  id: string;
+  game: Game;
+  messages: RoomChat[];
   users: RoomUser[];
-  sent_at: string; // Date
-}
-interface UserClientMessage {
-  message: string;
-  username?: string;
 }
 
-export enum GameStatus {
-  Awaiting = "Awaiting",
-  Started = "Started",
-  Ended = "Ended",
-}
-interface GameUserConnect {
-  type: 'PlayerConnect',
-  selection?: number;
-}
-interface GameUserTurn {
-  type: 'Turn',
-  play: string;
-  user_id: string;
-}
-export interface GameServerTurn extends GameUserTurn {
-  result: [number, number];
-  played_at: number; // Date
-}
-export interface GameServerMessage {
-  history: GameServerTurn[];
-  game_status: GameStatus,
-  current_player_turn: boolean; // t = player_0, f = player_1
-  players: [RoomUser, RoomUser]
-}
-type GameUserMessage = GameUserConnect | GameUserTurn;
+type UserMessage = PlayerConnect | Omit<Turn, 'result' | 'sent_at'> | UserChat;
 
 const WSUrl = `${environment.websocketProtocol}${environment.apiUrl}/v1/rooms`;
 
+const EMPTY_ROOM = {
+  id: '',
+  game: {
+    current_player_turn: true,
+    game_status: GameStates.Awaiting,
+    history: [],
+    players: <RoomUpdate['game']['players']>[
+      { id: '', avatar: '', username: '' },
+      { id: '', avatar: '', username: '' },
+    ],
+  },
+  messages: [],
+  users: [],
+};
+
 @Injectable({ providedIn: 'root' })
 export class RoomWsService {
-  private roomWs!: WebSocketManager<RoomMessage, UserClientMessage>;
-  private gameWs!: WebSocketManager<GameServerMessage, GameUserMessage>;
+  private roomWs!: WebSocketManager<RoomUpdate, UserMessage>;
   private roomId = '';
   private get _playerSelectionMem() {
     return sessionStorage.getItem(`${this.roomId}_selection`) || '';
@@ -63,28 +91,25 @@ export class RoomWsService {
 
   playerSelection = signal('');
 
-  room = signal<RoomMessage | null>(null);
-  game = signal<GameServerMessage | null>(null);
+  room = signal<RoomUpdate>(EMPTY_ROOM);
 
   constructor(private userService: UserService) {}
 
   /**
    * Awaits for room initialization for component resolver use.
    */
-  roomConnect(id: string | null):Observable<RoomMessage> {
+  roomConnect(id: string | null):Observable<RoomUpdate> {
     let roomUrl = WSUrl;
     if (id) roomUrl += `/${id}`;
     roomUrl += encodeURI(`?token=${this.userService.token}`);
 
-    this.roomWs = new WebSocketManager<RoomMessage, UserClientMessage>(roomUrl);
+    this.roomWs = new WebSocketManager(roomUrl);
 
     return this.roomWs.socketUpdates$.pipe(
       take(1),
-      tap(({room_id}) => {
-        this.roomId = room_id;
+      tap((room) => {
+        this.roomId = room.id;
         this.playerSelection.set(this._playerSelectionMem);
-        const gameUrl = `${WSUrl}/game/${room_id}?token=${this.userService.token}`;
-        this.gameWs = new WebSocketManager<GameServerMessage, GameUserMessage>(gameUrl);
         this.connectSignals();
       }),
     );
@@ -92,27 +117,23 @@ export class RoomWsService {
 
   destroy(): void {
     this.roomWs.destroy();
-    this.gameWs.destroy();
   }
 
-  // ROOM
   sendMessage(message: string) {
-    this.roomWs.next({ message });
+    this.roomWs.next({ message, type: UserMessages.UserChat });
   }
 
-  // GAME
   playerConnect(selection: number): void {
-    this.gameWs.next({ type: 'PlayerConnect', selection });
+    this.roomWs.next({ type: UserMessages.PlayerConnect, selection });
     this._playerSelectionMem = selection.toString();
     this.playerSelection.set(this._playerSelectionMem);
   }
 
   playTurn(turn: string): void {
-    this.gameWs.next({ type: 'Turn', play: turn, user_id: this.userService.user!.id });
+    this.roomWs.next({ type:UserMessages.Turn, play: turn, user_id: this.userService.user!.id });
   }
 
   private connectSignals(): void {
     this.roomWs.socketUpdates$.subscribe((r) => this.room.set(r))
-    this.gameWs.socketUpdates$.subscribe((r) => this.game.set(r))
   }
 }

@@ -11,7 +11,7 @@ pub struct Turn {
   #[serde(skip_deserializing)]
   pub result: (u8, u8),
   #[serde(skip_deserializing)]
-  pub played_at: DateTime<Utc>,
+  pub sent_at: DateTime<Utc>,
 }
 impl Turn {
   pub fn hit_dead_against_selection(&mut self, selection: u16) {

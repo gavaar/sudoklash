@@ -11,7 +11,7 @@ const roomServiceInitializer: ResolveFn<any> = (route: ActivatedRouteSnapshot, _
   const roomId = route.paramMap.get('id');
 
   return roomService.roomConnect(roomId).pipe(
-    tap(({room_id}) => location.replaceState(`/room/${room_id}`)),
+    tap(({ id }) => location.replaceState(`/room/${id}`)),
   );
 }
 
