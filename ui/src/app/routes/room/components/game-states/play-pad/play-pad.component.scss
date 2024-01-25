@@ -1,8 +1,18 @@
+:host::ng-deep .sudo-send-button {
+  width: 2rem;
+  height: 2rem;
+
+  .sudo-send-button__arrow {
+    font-size: 1.2rem;
+    transform: rotate(-90deg);
+  }
+}
+
 .sudo-play-pad__inputs {
   display: flex;
   flex-flow: row nowrap;
   gap: 1rem;
-  margin: 1rem;
+  margin: 0.25rem;
   justify-content: center;
   align-items: flex-start;
 }
@@ -28,9 +38,9 @@
 
 .sudo-play-pad__input {
   text-align: center;
-  font-size: 3rem;
-  height: 4rem;
-  width: 4rem;
+  font-size: 1.5rem;
+  height: 2rem;
+  width: 2rem;
   border: 3px solid darkgray;
   border-radius: 0.5rem;
 
@@ -53,15 +63,5 @@
   &.disabled {
     opacity: 0;
     transition: 0.25s;
-  }
-}
-
-.sudo-play-pad__submit::ng-deep .sudo-send-button {
-  width: 4rem;
-  height: 4rem;
-
-  .sudo-send-button__arrow {
-    font-size: 2.5rem;
-    transform: rotate(-90deg);
   }
 }

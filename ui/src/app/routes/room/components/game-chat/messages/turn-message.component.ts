@@ -8,13 +8,15 @@ import { DatePipe, NgIf } from '@angular/common';
   selector: 'turn-message',
   template: `
     <div class="turn-message">
-      <img class="turn-message__avatar" [src]="message.author.avatar" />
-      <h2 *ngIf="message.dead === 4">{{ message.author.username }} has won!</h2>
-      <span class="turn-message__play">{{ message.play }}</span>
-      <strong class="turn-message__result">
-        💥 {{ message.hit }} | {{ message.dead }} 💀
-      </strong>
-
+      <div class="turn-message__play">
+        <img class="turn-message__avatar" [src]="message.author.avatar" />
+        <h2 *ngIf="message.dead === 4">{{ message.author.username }} has won!</h2>
+        <span class="turn-message__play-value">{{ message.play }}</span>
+      </div>
+      <span class="turn-message__result">
+        <strong class="turn-message__dead">{{ message.dead }} 💀</strong>
+        <span class="turn-message__hit">{{ message.hit }} 💥</span>
+      </span>
       <small class="turn-message__timestamp">
         {{ message.sent_at | date: 'HH:mm' }}
       </small>
@@ -25,34 +27,74 @@ import { DatePipe, NgIf } from '@angular/common';
       width: fit-content;
       padding: 0.5rem;
       margin: 0 0.5rem;
+
+      &.right {
+        .turn-message {
+          flex-flow: row-reverse;
+        }
+        
+        .turn-message__play {
+          border-right: 0;
+          border-left: 1px solid var(--lightgray);
+        }
+
+        .turn-message__result {
+          align-items: flex-end;
+        }
+        
+        .turn-message__hit {
+          direction: rtl; 
+        }
+
+        .turn-message__dead {
+          direction: rtl; 
+        }
+      }
     }
 
     .turn-message {
       display: flex;
-      flex-flow: column;
+      flex-flow: row;      
       align-items: center;
-      row-gap: 0.25rem;
+      column-gap: 0.5rem;
     }
 
     .turn-message__play {
+      display: flex;
+      height: 100%;
+      flex-direction: column;
+      align-items: center;
+      border-right: 1px solid var(--lightgray);
+      gap: 0.25rem;
+    }
+    
+    .turn-message__play-value {
+      padding: 0 0.5rem;
+      row-gap: 0.5rem;
       letter-spacing: 0.5rem;
       font-weight: 700;
-      margin-left: 0.35rem;
     }
 
     .turn-message__avatar {
-      width: 2rem;
-      height: 2rem;
+      width: 1.5rem;
+      height: 1.5rem;
       border-radius: 50%;
     }
 
     .turn-message__result {
-      font-size: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .turn-message__dead {
+      font-size: 1.25rem;
     }
 
     .turn-message__timestamp {
-      font-size: 0.75rem;
+      font-size: 0.6rem;
       opacity: 0.4;
+      align-self: flex-end;
     }
   `],
   changeDetection: ChangeDetectionStrategy.OnPush,

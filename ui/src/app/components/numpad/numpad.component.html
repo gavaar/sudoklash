@@ -1,9 +1,9 @@
 <div class="sudo-numpad">
-  <button *ngFor="let pos of padStatuses; let i = index"
+  <button *ngFor="let pos of padStatuses"
     class="sudo-numpad__option"
     [ngClass]="{ accent: pos.accent, disabled: pos.disabled, locked: pos.locked }"
-    (touchstart)="$event.stopPropagation(); down(i)"
-    (mousedown)="$event.stopPropagation(); down(i)"
-    (touchend)="$event.stopPropagation(); $event.preventDefault(); up(i)"
-    (mouseup)="$event.stopPropagation(); $event.preventDefault(); up(i)">{{ i }}</button>
+    (touchstart)="$event.stopPropagation(); down(pos.value)"
+    (mousedown)="$event.stopPropagation(); down(pos.value)"
+    (touchend)="$event.stopPropagation(); $event.preventDefault(); up(pos.value)"
+    (mouseup)="$event.stopPropagation(); $event.preventDefault(); up(pos.value)">{{ pos.value }}</button>
 </div>

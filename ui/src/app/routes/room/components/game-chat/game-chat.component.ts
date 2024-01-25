@@ -1,14 +1,12 @@
 import { DatePipe, NgClass, NgFor, NgIf, NgSwitch, NgSwitchCase } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Signal, WritableSignal, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Signal, computed } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { SendButtonComponent } from 'src/app/components/send-button/send-button.component';
-import { Game, RoomChat, RoomUpdate, RoomUser, RoomWsService, Turn } from 'src/app/services/websocket/room.wsService';
+import { RoomChat, RoomWsService, Turn } from 'src/app/services/websocket/room.wsService';
 import { UserMessageComponent } from './messages/user-message.component';
-import { UserMessage, GameMessage, ServerMessage, TurnMessage, MessageType } from './models';
+import { GameMessage, MessageType } from './models';
 import { ServerMessageComponent } from './messages/server-message.component';
 import { TurnMessageComponent } from './messages/turn-message.component';
-import { toObservable } from '@angular/core/rxjs-interop';
-import { filter } from 'rxjs';
 
 const DEPENDENCIES = [NgIf, NgFor, NgClass, NgSwitch, NgSwitchCase, DatePipe, ReactiveFormsModule, SendButtonComponent, UserMessageComponent, ServerMessageComponent, TurnMessageComponent];
 const SERVER_AUTHOR = '_ROOM_';
@@ -18,12 +16,15 @@ const SERVER_AUTHOR = '_ROOM_';
   imports: DEPENDENCIES,
   selector: 'game-chat',
   templateUrl: './game-chat.component.html',
-  styleUrls: ['./game-chat.component.scss'],
+  styleUrls: [
+    './game-chat.component.overrides.scss',
+    './game-chat.component.scss',
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GameChatComponent {
   MessageType = MessageType;
-  colors = ['#A9DEF9aa','#fd5454aa','#BFD2BFaa','#D3F8E2aa','#E4C1F9aa'];
+  colors = ['#A9DEF950','#fd545450','#BFD2BF50','#D3F8E250','#E4C1F950'];
   messages: Signal<GameMessage[]> = computed(() => this.updateRoomMessages());
   
   chatControl = new FormControl('');

@@ -17,7 +17,7 @@ export class NumpadComponent implements OnChanges {
   @Output() hold = new EventEmitter<number>();
   @Output() select = new EventEmitter<number>();
 
-  padStatuses = Array.from(new Array(10), () => ({ disabled: false, accent: false, locked: false }));
+  padStatuses = Array.from(new Array(10), (_, i) => ({ disabled: false, accent: false, locked: false, value: i }));
 
   private held = false;
   private timeout?: any;

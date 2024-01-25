@@ -1,0 +1,62 @@
+:host::ng-deep {
+  .user-message__message:first-of-type {
+    border-top-right-radius: 1rem;
+    border-top-left-radius: 1rem;
+  }
+
+  &.right {
+    flex-direction: row-reverse;
+    align-items: flex-end;
+  
+    .user-message__message {
+      flex-direction: row-reverse;
+      background-color: var(--user-color);
+  
+      &:last-of-type {
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 1rem;
+      }
+    }
+  
+    .user-message {
+      align-items: flex-end;
+  
+      &:after {
+        right: 0;
+        border-left-color: var(--user-color);
+        border-right: 0;
+        margin-top: -10px;
+        margin-right: 2px;
+      }
+    }
+  }
+
+  &:not(.right) {
+    flex-direction: row;
+
+    .user-message__message {
+      flex-direction: row;
+      background-color: var(--user-color);
+
+      &:last-of-type {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 1rem;
+      }
+    }
+
+    .user-message {
+      align-items: flex-start;
+
+      &:after {
+        left: 0;
+        border-right-color: var(--user-color);
+        border-left: 0;
+        margin-left: 2px;
+      }
+    }
+  }
+
+  .game-chat__input .sudo-send-button {
+    background-color: lightgreen;
+  }
+}
