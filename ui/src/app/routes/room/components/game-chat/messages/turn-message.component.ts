@@ -1,17 +1,17 @@
 import { ChangeDetectionStrategy, Component, HostBinding, Input } from '@angular/core';
 import { TurnMessage } from '../models';
-import { DatePipe, NgIf } from '@angular/common';
+import { DatePipe, NgClass, NgIf } from '@angular/common';
 
 @Component({
   standalone: true,
-  imports: [DatePipe, NgIf],
+  imports: [DatePipe, NgIf, NgClass],
   selector: 'turn-message',
   template: `
     <div class="turn-message">
       <div class="turn-message__play">
         <img class="turn-message__avatar" [src]="message.author.avatar" />
         <h2 *ngIf="message.dead === 4">{{ message.author.username }} has won!</h2>
-        <span class="turn-message__play-value">{{ message.play }}</span>
+        <span class="turn-message__play-value">&nbsp;{{ message.play }}</span>
       </div>
       <span class="turn-message__result">
         <strong class="turn-message__dead">{{ message.dead }} 💀</strong>
@@ -25,8 +25,7 @@ import { DatePipe, NgIf } from '@angular/common';
   styles: [`
     :host {
       width: fit-content;
-      padding: 0.5rem;
-      margin: 0 0.5rem;
+      padding: 0.25rem 0.5rem;
 
       &.right {
         .turn-message {
@@ -66,10 +65,10 @@ import { DatePipe, NgIf } from '@angular/common';
       align-items: center;
       border-right: 1px solid var(--lightgray);
       gap: 0.25rem;
+      padding: 0 0.5rem;
     }
     
     .turn-message__play-value {
-      padding: 0 0.5rem;
       row-gap: 0.5rem;
       letter-spacing: 0.5rem;
       font-weight: 700;

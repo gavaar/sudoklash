@@ -1,6 +1,6 @@
 import { RoomUser } from 'src/app/services/websocket/room.wsService';
 
-type PositionedUser = RoomUser & { position: 'left' | 'right', color: string };
+export type PositionedUser = RoomUser & { position: 'left' | 'right', color: string };
 
 export enum MessageType {
   Server,

@@ -4,12 +4,19 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { SendButtonComponent } from 'src/app/components/send-button/send-button.component';
 import { RoomChat, RoomWsService, Turn } from 'src/app/services/websocket/room.wsService';
 import { UserMessageComponent } from './messages/user-message.component';
-import { GameMessage, MessageType } from './models';
+import { GameMessage, MessageType, PositionedUser } from './models';
 import { ServerMessageComponent } from './messages/server-message.component';
 import { TurnMessageComponent } from './messages/turn-message.component';
 
 const DEPENDENCIES = [NgIf, NgFor, NgClass, NgSwitch, NgSwitchCase, DatePipe, ReactiveFormsModule, SendButtonComponent, UserMessageComponent, ServerMessageComponent, TurnMessageComponent];
 const SERVER_AUTHOR = '_ROOM_';
+const DCD_USER: PositionedUser = {
+  id: 'dcd',
+  username: 'Disconnected',
+  avatar: 'assets/images/unkown-avatar.png',
+  color: 'var(--lightgray)',
+  position: 'left',
+};
 
 @Component({
   standalone: true,
@@ -41,7 +48,11 @@ export class GameChatComponent {
   }
 
   private getAuthor(user_id: string) {
-    const author_position = this.roomService.room().users.findIndex(u => user_id === u.id)!;
+    const author_position = this.roomService.room().users.findIndex(u => user_id === u.id);
+    if (author_position === -1) {
+      return DCD_USER;
+    }
+
     const position: 'left' | 'right' = author_position % 2 == 0 ? 'left' : 'right';
     const color = this.colors[author_position % this.colors.length];
     return { ...this.roomService.room().users[author_position], position, color };
