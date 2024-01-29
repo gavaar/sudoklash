@@ -1,9 +1,23 @@
+@keyframes background-dance {
+  0% {
+    background-color: var(--green);
+  }
+  50% {
+    background-color: var(--solid-green);
+  }
+  100% {
+    background-color: var(--green);
+  }
+}
+
 :host {
   display: flex;
   flex-flow: column nowrap;
   flex-grow: 1;
   overflow: hidden;
+  position: relative;
 }
+
 .game-chat__body {
   padding: 0.5rem;
   background-color: whitesmoke;
@@ -38,6 +52,19 @@
   border-bottom: 0;
   border-top-left-radius: 1rem;
   border-top-right-radius: 1rem;
+}
+
+.game-chat__new-msg-button {
+  color: var(--white);
+  border: 1px solid var(--green);
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 3.25rem;
+  max-height: fit-content;
+  padding: 0.1rem 2rem;
+  font-weight: 700;
+  animation: background-dance 3s ease-in infinite;
 }
 
 turn-message {

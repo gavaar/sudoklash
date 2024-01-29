@@ -1,4 +1,5 @@
-<div *ngIf="messages() as messages"
+<div #chatBody
+  *ngIf="messages() as messages"
   class="game-chat__body">
   <ng-container *ngFor="let message of messages; trackBy: messageFn"
     [ngSwitch]="message.type">
@@ -22,6 +23,12 @@
     </turn-message>
   </ng-container>
 </div>
+
+<button *ngIf="showScrollBotButton"
+  class="game-chat__new-msg-button"
+  (click)="scrollToBottom()">
+  New messages 💬
+</button>
 
 <div class="game-chat__input">
   <textarea type="text"

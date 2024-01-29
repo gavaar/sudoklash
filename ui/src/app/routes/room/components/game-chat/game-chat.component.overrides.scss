@@ -1,3 +1,4 @@
+// only ng-deep styles in this file
 :host::ng-deep {
   .user-message__message:first-of-type {
     border-top-right-radius: 1rem;

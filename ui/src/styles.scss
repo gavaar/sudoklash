@@ -1,10 +1,13 @@
 /* You can add global styles to this file, and also import other style files */
 :root {
+  --lightblack: #02020299;
+  --lightgray: #9b9b9b99;
+  --green: #08784b99;
+
+  // solid colors are the same as above without the 99 at the end
   --black: #0e0e0e;
   --white: #efefef;
-  --lightblack: #02020299;
-  --lightgray: #9b9b9b50;
-  --green: #08784b99;
+  --solid-green: #08784b;
 }
 
 body {
