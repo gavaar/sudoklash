@@ -1,10 +1,11 @@
-:host::ng-deep .sudo-send-button {
-  width: 2rem;
-  height: 2rem;
-
-  .sudo-send-button__arrow {
-    font-size: 1.2rem;
-    transform: rotate(-90deg);
+.sudo-play-pad__toggle-inputs-icon {
+  font-size: 1.5rem;
+  opacity: 0.85;
+  transition: 0.2s;
+  
+  &.hide-pad {
+    opacity: 0.2;
+    transition: 0.2s;
   }
 }
 

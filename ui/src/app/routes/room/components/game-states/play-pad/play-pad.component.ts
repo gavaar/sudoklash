@@ -8,7 +8,7 @@ import { SendButtonComponent } from 'src/app/components/send-button/send-button.
   imports: [NgFor, NgClass, NumpadComponent, SendButtonComponent],
   selector: 'sudo-play-pad',
   templateUrl: './play-pad.component.html',
-  styleUrls: ['./play-pad.component.scss'],
+  styleUrls: ['./play-pad.component.scss', './play-pad.component.overrides.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PlayPadComponent {
@@ -21,6 +21,7 @@ export class PlayPadComponent {
   accentPads = new Array(10);
   lockedPads = new Array(10);
   lockedSelection = [false, false, false, false];
+  hidePad = false;
   selection = signal(<(number | null)[]>[null, null, null, null]);
   disabledPads = computed(() => Array.from(new Array(10), (_, index) => this.selection().includes(index)));
   submitDisabled = computed(() => {

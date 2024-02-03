@@ -1,5 +1,11 @@
 <div class="sudo-play-pad">
   <div class="sudo-play-pad__inputs">
+    <span class="sudo-play-pad__toggle-inputs-icon"
+      [ngClass]="{ 'hide-pad': hidePad }"
+      (click)="hidePad = !hidePad">
+      👁
+    </span>
+
     <div *ngFor="let number of selection(); let i = index"
       class="sudo-play-pad__input-unit"
       [ngClass]="{ locked: lockedSelection[i] }">
@@ -21,6 +27,7 @@
     </sudo-send-button>
   </div>
   <sudo-numpad
+    [ngClass]="{ 'hide-pad': hidePad }"
     [disabledPads]="disabledPads()"
     [accentPads]="accentPads"
     [lockedPads]="lockedPads"

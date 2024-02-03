@@ -46,6 +46,7 @@
     (keydown.enter)="$event.preventDefault(); sendMessage()"></textarea>
   <sudo-send-button 
     class="game-chat__send-button"
+    [disabled]="chatControl.invalid"
     (click)="sendMessage()">
   </sudo-send-button>
 </div>

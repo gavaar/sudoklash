@@ -1,6 +1,6 @@
 import { DatePipe, NgClass, NgFor, NgIf, NgSwitch, NgSwitchCase } from '@angular/common';
 import { ChangeDetectionStrategy, Component, ElementRef, Signal, ViewChild, computed, effect, signal } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SendButtonComponent } from 'src/app/components/send-button/send-button.component';
 import { RoomChat, RoomWsService, Turn } from 'src/app/services/websocket/room.wsService';
 import { UserMessageComponent } from './messages/user-message.component';
@@ -57,7 +57,7 @@ export class GameChatComponent {
   messages: Signal<GameMessage[]> = computed(() => this.updateRoomMessages());
   showScrollBotButton = false;
   
-  chatControl = new FormControl('');
+  chatControl = new FormControl('', Validators.required);
 
   messageFn = (_: number, message: GameMessage) => message.sent_at;
 

@@ -17,14 +17,14 @@ import { ChangeDetectionStrategy, Component, Input, ViewEncapsulation } from '@a
       border-radius: 50%;
       background: transparent;
       border: 0;
-      color: white;
-      background-color: lightblue;
+      color: var(--white);
+      background-color: var(--lightblue);
       font-size: 1rem;
       text-align: end;
 
       &[disabled] {
         opacity: 0.5;
-        background-color: lightgray;
+        background-color: var(--lightgray);
         pointer-events: none;
       }
     }

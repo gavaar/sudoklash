@@ -57,7 +57,7 @@
     }
   }
 
-  .game-chat__input .sudo-send-button {
-    background-color: lightgreen;
+  .game-chat__input .sudo-send-button:not([disabled]) {
+    background-color: var(--green);
   }
 }

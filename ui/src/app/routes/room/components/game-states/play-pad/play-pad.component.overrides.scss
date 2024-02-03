@@ -1,0 +1,21 @@
+:host::ng-deep {
+  .sudo-send-button {
+    width: 2rem;
+    height: 2rem;
+  
+    .sudo-send-button__arrow {
+      font-size: 1.2rem;
+      transform: rotate(-90deg);
+    }
+  }
+
+  .sudo-numpad {
+    overflow: hidden;
+    max-height: 30dvh;
+    transition: 0.25s;
+  }
+  .hide-pad .sudo-numpad {
+    max-height: 0;
+    transition: 0.25s;
+  }
+}
