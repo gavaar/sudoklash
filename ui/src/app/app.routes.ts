@@ -34,4 +34,5 @@ export const routes: Routes = [
     ],
     canActivateChild: [userGuard],
   },
+  { path: '**', redirectTo: '', pathMatch: 'full'},
 ];
