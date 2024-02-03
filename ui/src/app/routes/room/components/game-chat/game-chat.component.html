@@ -1,7 +1,15 @@
+<div class="game-chat__filters">
+  <span *ngFor="let filter of filterValues()"
+    class="game-chat__filter-button"
+    [ngClass]="{ filtered: filters()[filter.key] }"
+    (click)="toggleFilter(filter.key)">
+    {{ filter.value }}
+  </span>
+</div>
+
 <div #chatBody
-  *ngIf="messages() as messages"
   class="game-chat__body">
-  <ng-container *ngFor="let message of messages; trackBy: messageFn"
+  <ng-container *ngFor="let message of messages(); trackBy: messageFn"
     [ngSwitch]="message.type">
     <user-message *ngSwitchCase="MessageType.User"
       [message]="$any(message)"

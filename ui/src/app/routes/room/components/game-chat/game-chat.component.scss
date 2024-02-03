@@ -18,6 +18,24 @@
   position: relative;
 }
 
+.game-chat__filters {
+  display: flex;
+  justify-content: space-around;
+  border-bottom: 1px solid var(--lightblack);
+  border-bottom-left-radius: 1rem;
+  border-bottom-right-radius: 1rem;
+}
+
+.game-chat__filter-button {
+  padding: 0.25rem 0;
+  font-size: 0.75rem;
+  color: var(--lightgray);
+  
+  &.filtered {
+    color: var(--black);
+  }
+}
+
 .game-chat__body {
   padding: 0.5rem;
   background-color: whitesmoke;

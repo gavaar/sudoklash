@@ -5,7 +5,7 @@
     border-top-left-radius: 1rem;
   }
 
-  &.right {
+  user-message.right {
     flex-direction: row-reverse;
     align-items: flex-end;
   
@@ -32,7 +32,7 @@
     }
   }
 
-  &:not(.right) {
+  user-message:not(.right) {
     flex-direction: row;
 
     .user-message__message {
