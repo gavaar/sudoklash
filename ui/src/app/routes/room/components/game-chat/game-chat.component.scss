@@ -46,6 +46,16 @@
   overflow: overlay;
 }
 
+.game-chat__loser {
+  text-align: center;
+}
+
+.game-chat__loser-img {
+  height: 1.2rem;
+  border-radius: 50%;
+  vertical-align: middle;
+}
+
 .game-chat__input {
   display: flex;
   column-gap: 0.5rem;
@@ -86,10 +96,6 @@
 }
 
 turn-message {
-  &.winner, &.right.winner {
-    width: unset;
-    align-self: stretch;
-  }
   &.right {
     background-color: var(--user-color);
     align-self: flex-end;

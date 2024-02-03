@@ -9,6 +9,12 @@
 
 <div #chatBody
   class="game-chat__body">
+  <span *ngIf="loser() as loser" class="game-chat__loser">
+    <img class="game-chat__loser-img" [src]="loser.avatar">&nbsp;
+    {{ loser.username }} came in close second trying to guess
+    <strong>{{ loser.guessing }}</strong>
+  </span>
+
   <ng-container *ngFor="let message of messages(); trackBy: messageFn"
     [ngSwitch]="message.type">
     <user-message *ngSwitchCase="MessageType.User"
@@ -26,7 +32,6 @@
       [style.--user-color]="message.author?.color"
       [ngClass]="{
         right: message.author?.position === 'right',
-        winner: message.dead === 4,
       }">
     </turn-message>
   </ng-container>

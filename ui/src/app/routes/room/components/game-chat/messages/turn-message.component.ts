@@ -11,7 +11,9 @@ import { DatePipe, NgClass, NgIf } from '@angular/common';
       <div class="turn-message__play">
         <img class="turn-message__avatar" [src]="message.author.avatar" />
         <h2 *ngIf="message.dead === 4">{{ message.author.username }} has won!</h2>
-        <span class="turn-message__play-value">&nbsp;{{ message.play }}</span>
+        <span class="turn-message__play-value">
+          &nbsp;{{ message.play }}
+        </span>
       </div>
       <span class="turn-message__result">
         <strong class="turn-message__dead">{{ message.dead }} 💀</strong>

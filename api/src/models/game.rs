@@ -17,8 +17,9 @@ pub enum GameStatus {
 pub struct Game {
   pub history: Vec<Turn>,
   pub game_status: GameStatus,
-  pub current_player_turn: bool, // true = 1, false = 0
+  pub current_player_turn: bool, // t = players.1, f = players.0
   pub players: (Player, Player),
+  pub result: (String, String), // winner | loser
 }
 impl Default for Game {
   fn default() -> Self {
@@ -27,6 +28,7 @@ impl Default for Game {
       history: Vec::new(),
       current_player_turn: true,
       game_status: GameStatus::Awaiting,
+      result: (String::new(), String::new()),
     }
   }
 }
@@ -59,30 +61,31 @@ impl Game {
       return;
     }
 
-    let (current_player, enemy_player) = if self.current_player_turn
-      { (self.players.0.to_owned(), self.players.1.to_owned()) } else
-      { (self.players.1.to_owned(), self.players.0.to_owned()) };
+    let (current_player, enemy_player) = if self.current_player_turn {
+      (&self.players.0, &self.players.1)
+    } else {
+      (&self.players.1, &self.players.0)
+    };
 
     if new_turn.user_id != current_player.id {
       eprintln!("It's not the players turn");
       return;
     }
 
-    let str_play = new_turn.play.to_string();
-    let chars = str_play.chars().into_iter();
-    let play_chars: HashSet<char> = chars.to_owned().collect();
+    let play_chars: HashSet<char> = new_turn.play.chars().collect();
 
     // if original input is less than 4, or any got removed by being duplicated, we err.
-    if play_chars.len() != 4 || str_play.len() != 4 {
+    if play_chars.len() != 4 || new_turn.play.len() != 4 {
       eprintln!("Wrong number of characters on play");
       return;
     }
 
-    new_turn.hit_dead_against_selection(enemy_player.selection);
+    new_turn.hit_dead_against_selection(&enemy_player.selection);
     new_turn.sent_at = Utc::now();
 
     if new_turn.result.1 == 4 {
       self.game_status = GameStatus::Ended;
+      self.result = (current_player.selection.to_owned(), enemy_player.selection.to_owned());
     }
 
     self.history.push(new_turn.to_owned());

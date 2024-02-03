@@ -19,7 +19,7 @@
     class="room__selection">
     You selected: <strong>{{ selection }}</strong>
   </small>
-  <div class="room__turn-signal" [ngClass]="{ 'current-turn': gameState.myTurn }">
+  <div class="room__turn-signal" *ngIf="gameState.status == GameStates.Started" [ngClass]="{ 'current-turn': gameState.myTurn }">
     {{ gameState.myTurn ? 'Its your turn' : 'Waiting for ' + gameState.oponent?.username + '...' }}
   </div>
 </section>

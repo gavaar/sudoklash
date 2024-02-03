@@ -23,7 +23,7 @@ interface UserChat {
 
 interface PlayerConnect {
   type: UserMessages.PlayerConnect,
-  selection?: number;
+  selection?: string;
 }
 export interface Turn {
   type: UserMessages.Turn,
@@ -37,7 +37,8 @@ export interface Game {
   history: Turn[];
   game_status: GameStates;
   current_player_turn: boolean;
-  players: [RoomUser, RoomUser]
+  players: [RoomUser, RoomUser];
+  result: [string, string];
 }
 
 export interface RoomChat {
@@ -73,6 +74,7 @@ const EMPTY_ROOM = {
       { id: '', avatar: '', username: '' },
       { id: '', avatar: '', username: '' },
     ],
+    result: ['', ''] as [string, string],
   },
   messages: [],
   users: [],
@@ -123,7 +125,7 @@ export class RoomWsService {
     this.roomWs.next({ message, type: UserMessages.UserChat });
   }
 
-  playerConnect(selection: number): void {
+  playerConnect(selection: string): void {
     this.roomWs.next({ type: UserMessages.PlayerConnect, selection });
     this._playerSelectionMem = selection.toString();
     this.playerSelection.set(this._playerSelectionMem);

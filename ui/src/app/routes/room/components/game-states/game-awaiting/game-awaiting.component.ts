@@ -30,6 +30,6 @@ export class GameAwaitingComponent {
   constructor(private roomService: RoomWsService, private userService: UserService) {}
 
   connectToGame(value: string): void {
-    this.roomService.playerConnect(+value);
+    this.roomService.playerConnect(value);
   }
 }

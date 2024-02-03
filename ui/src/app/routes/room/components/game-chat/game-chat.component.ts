@@ -2,7 +2,7 @@ import { DatePipe, NgClass, NgFor, NgIf, NgSwitch, NgSwitchCase } from '@angular
 import { ChangeDetectionStrategy, Component, ElementRef, Signal, ViewChild, computed, effect, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SendButtonComponent } from 'src/app/components/send-button/send-button.component';
-import { RoomChat, RoomWsService, Turn } from 'src/app/services/websocket/room.wsService';
+import { RoomChat, RoomUser, RoomWsService, Turn } from 'src/app/services/websocket/room.wsService';
 import { UserMessageComponent } from './messages/user-message.component';
 import { GameMessage, MessageType, PositionedUser } from './models';
 import { ServerMessageComponent } from './messages/server-message.component';
@@ -55,6 +55,13 @@ export class GameChatComponent {
     ];
   });
   messages: Signal<GameMessage[]> = computed(() => this.updateRoomMessages());
+  loser = computed<(RoomUser & { guessing: string }) | null>(() => {
+    const game = this.roomService.room().game;
+    const winnerSelection = game.result[0];
+    if (!winnerSelection) { return null; }
+
+    return { ...(game.current_player_turn ? game.players[0] : game.players[1]), guessing: winnerSelection };
+  });
   showScrollBotButton = false;
   
   chatControl = new FormControl('', Validators.required);
@@ -80,17 +87,6 @@ export class GameChatComponent {
     }
   }
 
-  private getAuthor(user_id: string) {
-    const author_position = this.roomService.room().users.findIndex(u => user_id === u.id);
-    if (author_position === -1) {
-      return DCD_USER;
-    }
-
-    const position: 'left' | 'right' = author_position % 2 == 0 ? 'left' : 'right';
-    const color = this.colors[author_position % this.colors.length];
-    return { ...this.roomService.room().users[author_position], position, color };
-  }
-
   scrollToBottom(behavior: 'smooth' | 'instant' = 'smooth'): void {
     this.showScrollBotButton = false;
     timer(100).pipe(take(1)).subscribe({
@@ -103,6 +99,17 @@ export class GameChatComponent {
   toggleFilter(filter: keyof Filters): void {
     this.scrollToBottom('instant');
     this.filters.mutate(filters => filters[filter] = !filters[filter]);
+  }
+
+  private getAuthor(user_id: string) {
+    const author_position = this.roomService.room().users.findIndex(u => user_id === u.id);
+    if (author_position === -1) {
+      return DCD_USER;
+    }
+
+    const position: 'left' | 'right' = author_position % 2 == 0 ? 'left' : 'right';
+    const color = this.colors[author_position % this.colors.length];
+    return { ...this.roomService.room().users[author_position], position, color };
   }
 
   private updateRoomMessages(): GameMessage[] {

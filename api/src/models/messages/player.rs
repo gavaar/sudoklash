@@ -3,7 +3,7 @@ use serde::{Serialize, Deserialize};
 
 #[derive(Deserialize)]
 pub struct PlayerConnect {
-  pub selection: u16,
+  pub selection: String,
 }
 
 #[derive(Serialize, Message, Debug, Clone)]
@@ -13,7 +13,7 @@ pub struct Player {
   pub username: String,
   pub avatar: String,
   #[serde(skip_serializing)]
-  pub selection: u16,
+  pub selection: String,
 }
 impl Player {
   pub fn empty() -> Player {
@@ -21,7 +21,7 @@ impl Player {
       id: String::from(""),
       avatar: String::from(""),
       username: String::from(""),
-      selection: 0,
+      selection: String::from(""),
     }
   }
 }
