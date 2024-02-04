@@ -1,0 +1,23 @@
+name: API Deploy
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 'api/**'
+
+defaults:
+ run:
+  working-directory: ./api
+
+jobs:
+  deploy:
+    name: Deploy API app
+    runs-on: ubuntu-latest
+    concurrency: deploy-group
+    steps:
+      - uses: actions/checkout@v3
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}

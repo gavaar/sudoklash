@@ -7,7 +7,8 @@ import { RouterLink } from '@angular/router';
   selector: 'how-to-play',
   template: `
     <button class="htp__back-button" routerLink="/">🔙 Home</button>
-    <p>Under construction...! :D</p>`,
+    <p>Under construction...! :D</p>
+    <p>Should I start putting up text!!!???</p>`,
   styles: [`
     :host {
       display: flex;

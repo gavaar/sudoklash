@@ -1,0 +1,23 @@
+name: UI Deploy
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 'ui/**'
+
+defaults:
+ run:
+  working-directory: ./ui
+
+jobs:
+  deploy:
+    name: Deploy UI app
+    runs-on: ubuntu-latest
+    concurrency: deploy-group
+    steps:
+      - uses: actions/checkout@v3
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
