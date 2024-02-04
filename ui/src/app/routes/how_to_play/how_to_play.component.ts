@@ -84,9 +84,10 @@ import { RouterLink } from '@angular/router';
     <small><i>Filters to remove from chat, a button to hide the keypad, a notification that is your turn</i></small>
 
     <hr>
+
     <small>
       If you got this far thanks for reading.
-      Game isn't smallerfect, but I just wanted to have a way to play this with friends.
+      Game isn't perfect, but I just wanted to have a way to play this with friends.
       Hope you have a blast, and if you have suggestions or you find bugs, please let me know at <a href="mailto:oxspit@gmail.com">oxspit&#64;gmail.com</a>
     </small>
     `,
