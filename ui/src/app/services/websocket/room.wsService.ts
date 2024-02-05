@@ -135,6 +135,10 @@ export class RoomWsService {
     this.roomWs.next({ type:UserMessages.Turn, play: turn, user_id: this.userService.user!.id });
   }
 
+  resetRoomMemory(): void {
+    this.room.set(EMPTY_ROOM);
+  }
+
   private connectSignals(): void {
     this.roomWs.socketUpdates$.subscribe((r) => this.room.set(r))
   }

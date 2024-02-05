@@ -28,14 +28,15 @@
 .home__button {
   background: transparent;
   font-weight: 700;
-  color: var(--lightblack);
-  border: 1px solid var(--lightblack);
+  color: var(--white);
+  border: 1px solid var(--black);
   padding: 0.2rem 0.5rem;
   border-radius: 0.5rem;
 }
 
 .home__new-game-button {
   font-size: 2rem;
+  background-color: var(--green);
 
   &.small {
     font-size: 1.2rem;
@@ -46,10 +47,11 @@
   border: 0;
   padding: 0.5rem;
   font-size: 1.5rem;
-  background: var(--green);
+  background: var(--lightblue);
   color: var(--white);
 }
 
 .home__how-to-play {
   font-size: 1.2rem;
+  background-color: var(--lightblack);
 }

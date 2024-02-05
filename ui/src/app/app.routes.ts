@@ -19,7 +19,12 @@ const canLeaveRoom: ResolveFn<any> = () => {
   const roomService = inject(RoomWsService);
 
   if (roomService.room().users.length === 1) {
-    return confirm('You are the last player, if you leave the room will be deleted');
+    if (confirm('You are the last player, if you leave the room will be deleted')) {
+      roomService.resetRoomMemory();
+      return true;
+    }
+
+    return false;
   }
 
   return true;
