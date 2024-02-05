@@ -15,6 +15,16 @@ const roomServiceInitializer: ResolveFn<any> = (route: ActivatedRouteSnapshot, _
   );
 }
 
+const canLeaveRoom: ResolveFn<any> = () => {
+  const roomService = inject(RoomWsService);
+
+  if (roomService.room().users.length === 1) {
+    return confirm('You are the last player, if you leave the room will be deleted');
+  }
+
+  return true;
+}
+
 export const routes: Routes = [
   { path: '', loadComponent: () => import('./routes/home/home.component').then(c => c.HomeComponent) },
   { path: 'how-to-play', loadComponent: () => import('./routes/how_to_play/how_to_play.component').then(c => c.HowToPlayComponent) },
@@ -33,6 +43,7 @@ export const routes: Routes = [
       },
     ],
     canActivateChild: [userGuard],
+    canDeactivate: [canLeaveRoom],
   },
   { path: '**', redirectTo: '', pathMatch: 'full'},
 ];

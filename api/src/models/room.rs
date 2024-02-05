@@ -63,6 +63,10 @@ impl Default for Room {
 }
 impl Actor for Room {
   type Context = Context<Self>;
+
+  fn started(&mut self, _: &mut Self::Context) {
+    self.server_message(format!("Room {} created", self.id));
+  }
 }
 impl Handler<Player> for Room {
   type Result = ();
@@ -112,7 +116,7 @@ impl Handler<UserConnect> for Room {
 impl Handler<UserDisconnect> for Room {
   type Result = ();
 
-  fn handle(&mut self, disconnect_msg: UserDisconnect, _: &mut Self::Context) -> Self::Result {
+  fn handle(&mut self, disconnect_msg: UserDisconnect, ctx: &mut Self::Context) -> Self::Result {
     let Some(user_pos) = self.users.iter().position(|u| u.id == disconnect_msg.user_id) else {
       eprintln!("User was not connected to this room?");
       return;
@@ -120,6 +124,13 @@ impl Handler<UserDisconnect> for Room {
 
     let user = self.users.remove(user_pos);
     self.user_history.insert(user.id.to_owned(), user);
+
+    if self.users.len() == 0 {
+      // when a real db is used, this would make more sense... IF it gets used
+      // self.server_message("Room has been permanently closed".to_string());
+      ctx.stop();
+    }
+
     self.server_message(format!("{} just disconnected...", disconnect_msg.username));
     self.send_room_update();
   }

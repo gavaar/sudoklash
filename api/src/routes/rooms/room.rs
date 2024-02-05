@@ -9,7 +9,7 @@ use crate::models::{
   error::ErrorResponse,
   ws::UserSocket,
 };
-use crate::utils::{find_or_create_room, user_uuid_from_req};
+use crate::utils::{clear_empty_rooms, find_or_create_room, user_uuid_from_req};
 
 use super::JoinRoomRequest;
 
@@ -18,6 +18,8 @@ use super::JoinRoomRequest;
 #[get("/{room_id}")]
 pub async fn room(req: UserFromQueryParams, room_request: Path<JoinRoomRequest>, data: Data<AppState>, stream: Payload) -> Result<HttpResponse, Error> {
   let mut rooms = data.rooms.lock().unwrap();
+  
+  clear_empty_rooms(&mut rooms);
   let join_room = find_or_create_room(&room_request.room_id, &mut rooms);
 
   let user_id = match user_uuid_from_req(&req) {
