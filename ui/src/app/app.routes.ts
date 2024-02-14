@@ -2,17 +2,12 @@ import { Routes, ResolveFn, ActivatedRouteSnapshot, RouterStateSnapshot, Router 
 import { userGuard } from './guards/user.guard';
 import { inject } from '@angular/core';
 import { RoomWsService } from './services/websocket/room.wsService';
-import { tap } from 'rxjs';
-import { Location } from '@angular/common';
 
 const roomServiceInitializer: ResolveFn<any> = (route: ActivatedRouteSnapshot, _state: RouterStateSnapshot) => {
   const roomService = inject(RoomWsService);
-  const location = inject(Location);
   const roomId = route.paramMap.get('id');
 
-  return roomService.roomConnect(roomId).pipe(
-    tap(({ id }) => location.replaceState(`/room/${id}`)),
-  );
+  return roomService.roomConnect(roomId);
 }
 
 const canLeaveRoom: ResolveFn<any> = () => {
